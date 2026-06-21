@@ -1,14 +1,13 @@
 import React from 'react'
-import { FaDroplet } from "react-icons/fa6";
 
-const Data = () => {
+const Data = ({ icon, data, text }) => {
   return (
     <div>
       <div className='flex gap-4 py-3 px-5 min-w-70 h-30 max-w-full items-center bg-[rgba(255,255,255,0.05)] border border-[rgba(74,144,217,0.18)] p-2 rounded-2xl'>
-        <FaDroplet size={30}/>
+        {icon}
         <div>
-          <p className='text-[#A8C8F0] text-lg'>Humidity</p>
-          <p className='text-[#F0F4FF] text-2xl font-normal'>80%</p>
+          <p className='text-[#A8C8F0] text-lg'>{text}</p>
+          <p className='text-[#F0F4FF] text-2xl font-normal'>{data}</p>
         </div>
       </div>
     </div>
