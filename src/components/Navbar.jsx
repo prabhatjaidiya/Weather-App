@@ -1,18 +1,28 @@
 import React from 'react'
-import { TiWeatherCloudy } from "react-icons/ti";
 import { IoSearchSharp } from "react-icons/io5";
+import Logo from './Logo';
 
-const Navbar = () => {
-  return (
-    <div className='h-15 w-full gap-5 px-6 mt-4 bg-[#0B1120] flex justify-between items-center'>
-        <span className='font-22 font-bold tracking-<-0.02em> text-[#f0f4ff] whitespace-nowrap flex'>
-            <span className='mr-4 text-[#4A90D9]'><TiWeatherCloudy size={25}/></span> Weather App
-        </span>
-        <div className='flex-1 flex items-center gap-3 ml-30 bg-[#1E2D4A] p-2 rounded-2xl border border-[rgba(74,144,217,0.18)]'>
+
+const Navbar = ({handleSearch,city,setCity}) => {   
+    return (
+    <div className='h-15 w-full max-sm:gap-3 max-sm:px-3 gap-5 px-6 mt-4 bg-transparent flex justify-between items-center'>
+        <Logo />
+        <div className='flex-1 flex items-center gap-3 ml-30 max-sm:ml-0 bg-[#1E2D4A] p-2 rounded-2xl border border-[rgba(74,144,217,0.18)]'>
         <label htmlFor='search-input' className='flex items-center gap-3 w-full h-full cursor-text'>
-            <a className=' text-[#A8C8F0] pointer-events-none'><IoSearchSharp size={30} /></a>            
+            <button
+                onClick={()=>{
+                    handleSearch(city)
+                }} 
+                className=' text-[#A8C8F0] cursor-pointer'>{<IoSearchSharp size={30} />}</button>            
             <input 
                 id='search-input'
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                onKeyDown={(e) => {
+                    if(e.key === 'Enter'){
+                        handleSearch(city)}
+                    } 
+                }
                 type="text" 
                 placeholder='Search city or Zip...' 
                 className='bg-[#1E2D4A] text-[#F0F4FF] placeholder:text-[#A8C8F0] focus:outline-none'
@@ -22,5 +32,4 @@ const Navbar = () => {
     </div>
   )
 }
-
 export default Navbar

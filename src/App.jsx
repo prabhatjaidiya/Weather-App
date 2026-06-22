@@ -2,14 +2,26 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './components/Navbar';
 import Card from './components/Card';
 import DayData from './components/DayData';
+import { getBgGradient } from './components/Utils';
+
+
 
 const App = () => {
   const [Weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  let city = "Delhi";
-  useEffect((setData) => {
-    const fetchWeather = async (setWeather) => {
+  const [city, setCity] = useState("Delhi") 
+  useEffect(() => {
+    fetchWeather( setWeather );
+    setCity("")
+  }, []);  
+  const handleSearch = (city,fetchWeather) => {
+  const trimmed = city.trim();
+  if(!trimmed) return;
+  fetchWeather(trimmed)
+}
+  const fetchWeather = async () => {
+      if (!city || !city.trim()) return;
       setLoading(true);
       setError(null);
       const key = import.meta.env.VITE_OWM_API_KEY;
@@ -29,14 +41,14 @@ const App = () => {
       const forecastData = await forecastResponse.json();
       console.log(forecastData);
     }
-    fetchWeather(setWeather);
-  }, []);
   return (
-    <div className='min-h-screen w-full bg-[#0B1120] font-(family-name:<Space Grotesk,system-ui,sens-serif>) text-[#F0F4FF] flex flex-col'> 
-      <Navbar />
-      <div className=' flex'>
+    <div style={{
+      background: getBgGradient(Weather?.weather?.[0]?.icon),
+    }} className='min-h-screen w-full bg-[#0B1120] font-(family-name:<Space Grotesk,system-ui,sens-serif>) text-[#F0F4FF] flex flex-col md:flex-wrap'> 
+      <Navbar handleSearch={ fetchWeather } city={city} setCity={setCity} setWeather={setWeather}/>
+      <div className=' flex md:flex-wrap md:items-center md:ml-12 max-sm:flex-wrap'>
         <Card Weather={Weather} loading={loading} error={error} />
-        <div className='my-12'>
+        <div className='my-12 md:px-5 md:m-12 max-sm:my-5 '>
           <h2 className='text-xl p-4'>7-DAY FORECAST</h2>
           <DayData text='Monday'/>
           <DayData text='Tuesday' />
@@ -50,5 +62,4 @@ const App = () => {
     </div>
   )
 }
-
 export default App
