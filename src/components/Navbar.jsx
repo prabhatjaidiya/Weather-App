@@ -2,9 +2,10 @@ import React from 'react'
 import { IoSearchSharp } from "react-icons/io5";
 import Logo from './Logo';
 import Location from './Location';
+import ReactenSrc from './ReactenSrc';
 
 
-const Navbar = ({city,setCity,fetchWeather,handleGeolocate,recentSearch}) => {   
+const Navbar = ({city,setCity,fetchWeather,handleGeolocate,recentSearch,loading,handleInputChange}) => {   
     return (
     <div className='h-15 w-full max-sm:gap-3 max-sm:px-3 gap-5 px-6 mt-4 bg-transparent flex justify-between items-center'>
         <Logo />
@@ -14,11 +15,20 @@ const Navbar = ({city,setCity,fetchWeather,handleGeolocate,recentSearch}) => {
                 onClick={()=>{
                     fetchWeather(city)
                 }} 
-                className=' text-[#A8C8F0] cursor-pointer'>{<IoSearchSharp size={30} />}</button>            
+                disabled={loading}
+                className=' text-[#A8C8F0] text-4xl cursor-pointer'
+                style={{
+                    opacity: loading ? 0.5 : 1,
+                    cursor: loading ? "not-allowed" : "pointer",
+                    transition: "opacity 0.2s"
+                }}
+            >
+                {loading ? "..." : <IoSearchSharp size={30} />}
+            </button>            
             <input 
                 id='search-input'
                 value={city}
-                onChange={(e) => setCity(e.target.value)}
+                onChange={handleInputChange}
                 onKeyDown={(e) => {
                     if(e.key === 'Enter'){
                         fetchWeather(city)}
@@ -29,17 +39,9 @@ const Navbar = ({city,setCity,fetchWeather,handleGeolocate,recentSearch}) => {
                 className='bg-[#1E2D4A] w-full text-[#F0F4FF] placeholder:text-[#A8C8F0] focus:outline-none'
             />
         </label>
-        {recentSearch.length > 0 && (
-            <div style={{display:'flex',alignItems:"center",gap:12,marginTop:6,width:"full"}}>
-                {recentSearch.map(c => (
-                    <button className='cursor-pointer' key={c} onClick={()=>{setCity(c); fetchWeather(c); }}>
-                        {c}
-                    </button>
-                ))}
-            </div>
-        )}
+        {recentSearch.length > 0 && (<ReactenSrc recentSearch={recentSearch}/>)}
         </div>
-        <Location handleGeolocate={handleGeolocate}/>
+        <Location handleGeolocate={handleGeolocate} loading={loading}/>
     </div>
   )
 }

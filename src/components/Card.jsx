@@ -9,6 +9,14 @@ import { FaTachometerAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 
 const Card = ({ weather, loading, error,unit,setUnit }) => {
+    if(!loading && !weather && !error) return (
+        <div className='w-180 h-210 bg-[#1E2D4A] rounded-2xl p-6 flex flex-col justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
+            <div className='pb-12' style={{fontSize:150}}>🌎</div>
+            <p className='text-[#F0F4FF] text-3xl font-bold'>Search any city to see the weather</p>
+        </div>
+    )
+
+
    if(loading){
     return (
         <div className='w-180 h-210 bg-[#1E2D4A] rounded-2xl p-6 flex justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
@@ -24,7 +32,7 @@ const Card = ({ weather, loading, error,unit,setUnit }) => {
     );
   }
   return (
-    <div className='w-full max-w-180 max-sm:ml-2 max-sm:m-2 max-sm:p-2 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex-col justify-between gap-4 m-12 max-sm:gap-2 border border-[rgba(74,144,217,0.18)]'>
+    <div className='w-full animate-[fadeIn_0.4s-ease] max-w-180 max-sm:ml-2 max-sm:m-2 max-sm:p-2 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex-col justify-between gap-4 m-12 max-sm:gap-2 border border-[rgba(74,144,217,0.18)]'>
         <h1 className='mx-6 my-2 text-4xl md:pl-4 max-sm:text-xl'>Today Weather</h1>
         <div className='flex max-sm:w-full pt-6 justify-between'>
         <div className='flex flex-col gap-2 mb-4 md:pl-7 max-sm:ml-2'>
