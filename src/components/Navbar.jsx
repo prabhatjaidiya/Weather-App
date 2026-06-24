@@ -9,7 +9,7 @@ const Navbar = ({city,setCity,fetchWeather,handleGeolocate,recentSearch,loading,
     return (
     <div className='h-15 w-full max-sm:gap-3 max-sm:px-3 gap-5 px-6 mt-4 bg-transparent flex justify-between items-center'>
         <Logo />
-        <div className='flex-1 flex items-center gap-3 ml-30 max-sm:ml-0 bg-[#1E2D4A] p-2 rounded-2xl border border-[rgba(74,144,217,0.18)]'>
+        <div className='flex-1 flex items-center gap-3 ml-32 max-sm:ml-0 bg-[#1E2D4A] p-2 rounded-2xl border border-[rgba(74,144,217,0.18)]'>
         <label htmlFor='search-input' className='flex items-center gap-3 w-full h-full cursor-text'>
             <button
                 onClick={()=>{
@@ -39,7 +39,7 @@ const Navbar = ({city,setCity,fetchWeather,handleGeolocate,recentSearch,loading,
                 className='bg-[#1E2D4A] w-full text-[#F0F4FF] placeholder:text-[#A8C8F0] focus:outline-none'
             />
         </label>
-        {recentSearch.length > 0 && (<ReactenSrc recentSearch={recentSearch}/>)}
+        {recentSearch.length > 0 && (<ReactenSrc recentSearch={recentSearch} setCity={setCity} fetchWeather={fetchWeather}/>)}
         </div>
         <Location handleGeolocate={handleGeolocate} loading={loading}/>
     </div>

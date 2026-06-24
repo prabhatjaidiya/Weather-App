@@ -10,23 +10,15 @@ import { FaEye } from "react-icons/fa";
 
 const Card = ({ weather, loading, error,unit,setUnit }) => {
     if(!loading && !weather && !error) return (
-        <div className='w-180 h-210 bg-[#1E2D4A] rounded-2xl p-6 flex flex-col justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
+        <div className='w-full h-96 bg-[#1E2D4A] rounded-2xl p-6 flex flex-col justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
             <div className='pb-12' style={{fontSize:150}}>🌎</div>
-            <p className='text-[#F0F4FF] text-3xl font-bold'>Search any city to see the weather</p>
+            <p className='text-[#F0F4FF] text-3xl font-bold whitespace-nowrap'>Search any city to see the weather</p>
         </div>
     )
 
-
-   if(loading){
+    if(error){
     return (
-        <div className='w-180 h-210 bg-[#1E2D4A] rounded-2xl p-6 flex justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
-            <h1 className='text-[#F0F4FF] text-5xl font-bold'>Loading...</h1>
-        </div>
-    );
-  }
-  if(error){
-    return (
-        <div className='w-180 h-210 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
+        <div className='w-full h-96 bg-[#1E2D4A] rounded-2xl p-6 flex justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
             <h1 className='text-[#F0F4FF] text-5xl font-bold'>{error}</h1>
         </div>
     );
@@ -75,7 +67,7 @@ const Card = ({ weather, loading, error,unit,setUnit }) => {
             </div>
         </div>
         </div>
-        <div className='flex w-full justify-center gap-12 max-sm:gap-4 mb-12 my-6 max-sm:w-full max-sm:items-center max-sm:justify-center flex-wrap'>
+        <div className='flex w-full justify-evenly gap-10 max-sm:gap-4 mb-12 my-6 max-sm:w-full max-sm:items-center max-sm:justify-center flex-wrap'>
             <Data icon={<FaDroplet size={30} />} data={`${weather?.main?.humidity}%`} text='Humidity' />
             <Data icon={<FaWind size={30} />} data={`${weather?.wind?.speed} m/s`} text='Wind Speed' />
             <Data icon={<CiTempHigh size={30} />} data={`H:${Math.round(weather?.main?.temp_max)}°${unit === "imperial" ? "F" : "C"} / L:${Math.round(weather?.main?.temp_min)}°${unit === "imperial" ? "F" : "C"}`} text='Temperature Range' />

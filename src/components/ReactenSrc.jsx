@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ReactenSrc = ({recentSearch}) => {
+const ReactenSrc = ({recentSearch,setCity,fetchWeather }) => {
         return(
             <div className='flex items-center gap-4 text-[#F0F4FF]/50 pr-2 max-sm:gap-2 max-sm:text-sm w-min'>
                 {recentSearch.map(c => (

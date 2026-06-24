@@ -3,7 +3,7 @@ import DayData from './DayData'
 
 const FiveDayForcast = ({forecast,unit}) => {
   return (
-        <div className='max-sm:w-full w-full max-w-160 md:px-5 md:w-full md:flex md:flex-col mt-12'>
+        <div className='max-sm:w-full w-full max-w-160 md:px-5 md:w-full md:flex md:flex-col mt-8'>
           <h2 className='text-3xl max-sm:text-xl p-4 w-full'>5-DAY FORECAST</h2>
           {forecast.length > 0 && forecast.map((f) => (
             <DayData 

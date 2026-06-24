@@ -3,10 +3,10 @@ const ForecastSkeleton = () => {
     <div className="w-full max-w-4xl m-12 mt-18 animate-pulse">
       
       {/* Title */}
-      <div className="h-8 w-56 bg-white/10 rounded mb-6" />
+      <div className="h-8 w-56 bg-white/10 rounded mb-12" />
 
       {/* Forecast Rows */}
-      <div className="space-y-8">
+      <div className="space-y-16">
         {[1, 2, 3, 4, 5].map((day) => (
           <div
             key={day}
