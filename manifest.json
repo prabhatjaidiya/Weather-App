@@ -1,0 +1,14 @@
+{
+    "name": "Weaher App",
+    "short_name": "Weather",
+    "description": "Weather app for any city",
+    "Start_url": "/",
+    "display": "standalone",
+    "background_color": "#0B1120",
+    "theme_color": "#4A90D9",
+    "icons": [
+        {"src": "/weather_icon_192x192.png", "sizes": "192x192", "type": "image/png" },
+        {"src": "/weather_icon_512x512.png", "sizes": "512x512", "type": "image/png" }
+        
+    ]
+}

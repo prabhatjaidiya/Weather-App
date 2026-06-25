@@ -15,10 +15,21 @@ const App = () => {
   const [city, setCity] = useState("");
   const [unit, setUnit] = useState("metric");
   const [forecast, setForecast] = useState([]);
+  const [hourly, setHourly] = useState([]);
   const [recentSearch, setRecentSearch] = useState(() => {
     return JSON.parse(localStorage.getItem("recentSearch") || "[]");
   });
   const debounceRef = useRef(null);
+  const isInitialLoad = useRef(true);
+  const controllerRef = useRef(null);
+
+  useEffect(() => {
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return;
+    }
+    if (weather) fetchWeather(city);
+  }, [unit]);
 
   const handleInputChange = (e) => {
     const value = e.target.value
@@ -32,48 +43,88 @@ const App = () => {
   }
 
   useEffect(() => {
-    if(city.trim()) fetchWeather(city);
-  }, [unit]);  
+    const lastCity = localStorage.getItem("lastCity");
+
+    if (lastCity) {
+      setCity(lastCity);
+      fetchWeather(lastCity);
+    }
+  }, []);
+
   
   const fetchWeather = async (cityName = city) => {
-      if (!cityName.trim()) return;
-      setLoading(true);
-      setError(null);
-      const key = import.meta.env.VITE_OWM_API_KEY;
-      try{
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${unit}&appid=${key}`);
-        if(!res.ok) throw new Error("City not found");
-        const data = await res.json()
-        setWeather(data);
-        setCity(cityName);
+    if (!cityName.trim()) return;
 
-        setRecentSearch(prev => {
-          const normalizedCity = cityName.trim();
-          const width = window.innerWidth;
-          
-          const update = [normalizedCity,...prev.filter(c => c !== normalizedCity)];
-          
-          const finalList = width >= 500 ? update.slice(0,5) : update.slice(0,2);
-          
-          localStorage.setItem("recentSearch", JSON.stringify(finalList));
+    controllerRef.current?.abort();
+    controllerRef.current = new AbortController();
+    const { signal } = controllerRef.current;
 
-          return finalList;
-        })
+    const key = import.meta.env.VITE_OWM_API_KEY;
 
-        const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${key}`);
-        const forecastData = await forecastResponse.json();
+    setLoading(true);
+    setError(null);
 
-        const daily = forecastData.list.filter(item => item.dt_txt.includes("12:00:00")).slice(0,7)
-        setForecast(daily)
-      }catch (err) {
-        setError(err.message);
-        setForecast([]);
-      }finally{
-        setLoading(false);
-      }
-      
-      
+    try {
+      // Current weather
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${unit}&appid=${key}`,
+        { signal }
+      );
+
+      if (!res.ok) throw new Error("City not found");
+
+      const data = await res.json();
+      setWeather(data);
+      setCity(cityName);
+
+      //  Forecast
+      const forecastResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${key}`,
+        { signal }
+      );
+
+      if (!forecastResponse.ok) throw new Error("Forecast fetch failed");
+
+      const forecastData = await forecastResponse.json();
+
+      const daily = forecastData.list
+        .filter(item => item.dt_txt.includes("12:00:00"))
+        .slice(0, 7);
+
+      setForecast(daily);
+
+      const hourlyData = forecastData.list.slice(0, 8);
+      setHourly(hourlyData);
+
+      // Local storage
+      localStorage.setItem("lastCity", cityName);
+
+      setRecentSearch(prev => {
+        const normalized = cityName.trim();
+        const width = window.innerWidth;
+
+        const updated = [
+          normalized,
+          ...prev.filter(c => c !== normalized),
+        ];
+
+        const finalList = width >= 500
+          ? updated.slice(0, 5)
+          : updated.slice(0, 2);
+
+        localStorage.setItem("recentSearch", JSON.stringify(finalList));
+        return finalList;
+      });
+
+    } catch (err) {
+      if(err.message === "AbortError") return;
+      setError(err.message);
+      setForecast([]);
+      setHourly([]);
+    } finally {
+      setLoading(false);
     }
+  };
   const handleGeolocate = () => {
     if(!navigator.geolocation){
       setError("Geolocation isn't support by your browser.")
@@ -102,6 +153,9 @@ const App = () => {
 
           const forecastData = await forecastResponse.json();
 
+          const hourly = forecastData.list.slice(0, 8);
+          setHourly(hourly);
+          
           const daily = forecastData.list.filter(item => item.dt_txt.includes("12:00:00")).slice(0,7)
           
           setForecast(daily)
@@ -144,6 +198,7 @@ const App = () => {
           error={error} 
           unit={unit} 
           setUnit={setUnit}
+          hourly={hourly}
         />}
         {loading ? <ForecastSkeleton /> : <FiveDayForcast forecast={forecast} unit={unit}/>}
       </div>
