@@ -11,7 +11,7 @@ import HourlyRow from './HourlyRow';
 
 const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
     if(!loading && !weather && !error) return (
-        <div className='w-full h-96 bg-[#1E2D4A] rounded-2xl p-6 flex flex-col justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
+        <div className='w-full max-sm:w-[355px] h-96 bg-[#1E2D4A] rounded-2xl p-6 flex flex-col justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
             <div className='pb-12' style={{fontSize:150}}>🌎</div>
             <p className='text-[#F0F4FF] max-sm:text-xl text-3xl font-bold whitespace-nowrap'>Search any city to see the weather</p>
         </div>
@@ -19,13 +19,13 @@ const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
 
     if(error){
     return (
-        <div className='w-full h-96 bg-[#1E2D4A] rounded-2xl p-6 flex justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
+        <div className='w-full max-sm:w-[355px] h-96 bg-[#1E2D4A] rounded-2xl p-6 flex justify-center items-center gap-4 m-12 border border-[rgba(74,144,217,0.18)]'>
             <h1 className='text-red-400  text-5xl font-bold'>{error}</h1>
         </div>
     );
   }
   return (
-    <div className='w-full max-w-[730px] animate-[fadeIn_0.4s-ease] max-w-180 max-sm:m-4 max-sm:w-80 max-sm:p-2 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex-col justify-between gap-4 m-12 max-sm:gap-2 border border-[rgba(74,144,217,0.18)]'>
+    <div className='w-full max-sm:w-[355px] max-w-[730px] animate-[fadeIn_0.4s-ease] max-w-180 max-sm:m-4 max-sm:p-2 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex-col justify-between gap-4 m-12 max-sm:gap-2 border border-[rgba(74,144,217,0.18)]'>
         <h1 className='mx-6 my-2 text-4xl md:pl-4 max-sm:text-xl'>Today Weather</h1>
         <div className='flex max-sm:w-full pt-6 justify-between'>
         <div className='flex flex-col gap-2 mb-4 md:pl-7 max-sm:ml-2'>
@@ -34,7 +34,7 @@ const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
             <h2 className='text-[#A8C8F0] text-2xl max-sm:text-5sm'>{weather?.weather?.[0]?.description}</h2>
             <span className='text-7xl md:text-5xl max-sm:text-3xl'>{getWeatherEmoji(weather?.weather?.[0]?.icon)}</span>
         </div>
-        <div className='flex flex-col max-sm:w-min'>
+        <div className='flex flex-col max-sm:pl-6 max-sm:w-min'>
             <div className='flex mb-4 max-sm:mt-2'>
                 <span className='text-9xl max-sm:text-5xl md:text-8xl font-[#F0F4FF] max-sm:mt-5 max-sm:ml-12 font-semibold'>{Math.round(weather?.main?.temp)}</span>
                 <p  className='pt-6 font-semibold text-2xl pr-4 mb-12 text-[#FFD166]'>°{unit === "imperial" ? "F" : "C"}</p>
