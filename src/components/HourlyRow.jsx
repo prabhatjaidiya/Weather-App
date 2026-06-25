@@ -3,7 +3,7 @@ import { getWeatherEmoji } from './Utils'
 
 const HourlyRow = ({hourly,unit}) => {
   return (
-    <div id='hourltRow' className='flex gap-12 overflow-x-auto pb-8 my-6 px-12 max-sm:px-8 scrollbar-none'>
+    <div id='hourltRow' className='flex gap-12 max-sm:gap-6 overflow-x-auto pb-8 my-6 px-12 max-sm:px-2 scrollbar-none'>
       { hourly.map((h)=>(
         <div key={h.dt} className='flex flex-col items-center gap-y-4 max-sm:gap-y-2 min-w-[60px]'>
             <span className='text-sm'>

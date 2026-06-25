@@ -25,7 +25,7 @@ const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
     );
   }
   return (
-    <div className='w-full max-w-[730px] animate-[fadeIn_0.4s-ease] max-w-180 max-sm:ml-2 max-sm:m-2 max-sm:p-2 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex-col justify-between gap-4 m-12 max-sm:gap-2 border border-[rgba(74,144,217,0.18)]'>
+    <div className='w-full max-w-[730px] animate-[fadeIn_0.4s-ease] max-w-180 max-sm:m-4 max-sm:w-80 max-sm:p-2 min-h-120 bg-[#1E2D4A] rounded-2xl p-6 flex-col justify-between gap-4 m-12 max-sm:gap-2 border border-[rgba(74,144,217,0.18)]'>
         <h1 className='mx-6 my-2 text-4xl md:pl-4 max-sm:text-xl'>Today Weather</h1>
         <div className='flex max-sm:w-full pt-6 justify-between'>
         <div className='flex flex-col gap-2 mb-4 md:pl-7 max-sm:ml-2'>
@@ -35,9 +35,9 @@ const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
             <span className='text-7xl md:text-5xl max-sm:text-3xl'>{getWeatherEmoji(weather?.weather?.[0]?.icon)}</span>
         </div>
         <div className='flex flex-col max-sm:w-min'>
-            <div className='flex mb-4 max-sm:ml-4 max-sm:mt-2'>
+            <div className='flex mb-4 max-sm:mt-2'>
                 <span className='text-9xl max-sm:text-5xl md:text-8xl font-[#F0F4FF] max-sm:mt-5 max-sm:ml-12 font-semibold'>{Math.round(weather?.main?.temp)}</span>
-                <p  className='pt-6 font-semibold text-2xl pr-8 mb-12 text-[#FFD166]'>°{unit === "imperial" ? "F" : "C"}</p>
+                <p  className='pt-6 font-semibold text-2xl pr-4 mb-12 text-[#FFD166]'>°{unit === "imperial" ? "F" : "C"}</p>
                 {weather && (
                 <button
                     aria-label="Toggle temperature unit"
@@ -72,7 +72,7 @@ const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
         <div className='flex w-full justify-evenly gap-10 max-sm:gap-4 mb-12 my-6 max-sm:w-full max-sm:items-center max-sm:justify-center flex-wrap'>
             <Data icon={<FaDroplet size={30} />} data={`${weather?.main?.humidity}%`} text='Humidity' />
             <Data icon={<FaWind size={30} />} data={`${weather?.wind?.speed} m/s`} text='Wind Speed' />
-            <Data icon={<CiTempHigh size={30} />} data={`H:${Math.round(weather?.main?.temp_max)}°${unit === "imperial" ? "F" : "C"} / L:${Math.round(weather?.main?.temp_min)}°${unit === "imperial" ? "F" : "C"}`} text='Temperature Range' />
+            <Data icon={<CiTempHigh size={30} />} data={`H:${Math.round(weather?.main?.temp_max)}°${unit === "imperial" ? "F" : "C"} / L:${Math.round(weather?.main?.temp_min)}°${unit === "imperial" ? "F" : "C"}`} text='Range' />
             <Data icon={<FaTachometerAlt size={30} />} data={`${weather?.main?.pressure} mb`} text='Pressure' />
             <Data icon={<FaEye size={30}/>} data={`${weather?.visibility / 1000} km`} text='Visibility' />
             <Data icon={<WiStrongWind size={30} />} data={`${weather?.wind?.gust} m/s`} text='Wind Gust' />
