@@ -8,6 +8,7 @@ import { FaWind } from "react-icons/fa";
 import { FaTachometerAlt } from "react-icons/fa";
 import { FaEye } from "react-icons/fa";
 import HourlyRow from './HourlyRow';
+import SunriseSunsetCard from './SunriseSunsetCard';
 
 const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
     if(!loading && !weather && !error) return (
@@ -76,6 +77,7 @@ const Card = ({ weather, loading, error,unit,setUnit,hourly }) => {
             <Data icon={<FaTachometerAlt size={30} />} data={`${weather?.main?.pressure} mb`} text='Pressure' />
             <Data icon={<FaEye size={30}/>} data={`${weather?.visibility / 1000} km`} text='Visibility' />
             <Data icon={<WiStrongWind size={30} />} data={`${weather?.wind?.gust} m/s`} text='Wind Gust' />
+            <SunriseSunsetCard weather={weather}/>
         </div>
     </div>
   )
