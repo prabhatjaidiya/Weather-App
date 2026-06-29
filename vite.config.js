@@ -7,6 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+
+      includeAssets: ['favicon.svg', 'robots.txt'],
+
       manifest: {
         name: 'Weather App',
         short_name: 'Weather',
@@ -18,15 +21,40 @@ export default defineConfig({
           {
             src: '/weather_icon_192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
           },
           {
             src: '/weather_icon_512x512.png',
             sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
-  ]
+            type: 'image/png',
+          },
+        ],
+      },
+
+      workbox: {
+        navigateFallback: '/',
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.origin === 'https://api.openweathermap.org',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'weather-api-cache',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
+      },
+
+      devOptions: {
+        enabled: true,
+      },
+    }),
+  ],
 })

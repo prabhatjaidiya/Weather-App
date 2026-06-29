@@ -22,15 +22,44 @@ const App = () => {
   const debounceRef = useRef(null);
   const isInitialLoad = useRef(true);
   const controllerRef = useRef(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstall, setShowInstall] = useState(false);
 
   useEffect(() => {
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
       return;
     }
-    if (weather) fetchWeather(city);
+    if (city.trim()) fetchWeather(city);
   }, [unit]);
 
+  useEffect(() => {
+    return () => clearTimeout(debounceRef.current);
+  }, []);
+
+  useEffect(() => {
+    const lastCity = localStorage.getItem("lastCity");
+
+    if (lastCity) {
+      setCity(lastCity);
+      fetchWeather(lastCity);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault(); // prevent browser default mini-bar
+      setDeferredPrompt(e);
+      setShowInstall(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handler);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handler);
+    };
+  }, []);
+  
   const handleInputChange = (e) => {
     const value = e.target.value
     setCity(value);
@@ -42,16 +71,6 @@ const App = () => {
     }, 500);
   }
 
-  useEffect(() => {
-    const lastCity = localStorage.getItem("lastCity");
-
-    if (lastCity) {
-      setCity(lastCity);
-      fetchWeather(lastCity);
-    }
-  }, []);
-
-  
   const fetchWeather = async (cityName = city) => {
     if (!cityName.trim()) return;
 
@@ -114,20 +133,27 @@ const App = () => {
 
         localStorage.setItem("recentSearch", JSON.stringify(finalList));
         return finalList;
+
       });
 
     } catch (err) {
-      if(err.message === "AbortError") return;
-      setError(err.message);
-      setForecast([]);
-      setHourly([]);
-    } finally {
-      setLoading(false);
+      if(err.name !== "AbortError"){
+        setError(err.message || "Failed to fetch data");
+        setForecast([]);
+        setHourly([]);
+      }
+    }finally{
+      setLoading(false)
     }
   };
+
   const handleGeolocate = () => {
+    controllerRef.current?.abort();
+    controllerRef.current = new AbortController();
+    const { signal } = controllerRef.current;
+
     if(!navigator.geolocation){
-      setError("Geolocation isn't support by your browser.")
+      setError("Geolocation isn't supported by your browser.")
       return;
     }
 
@@ -141,15 +167,15 @@ const App = () => {
         const { latitude, longitude } = pos.coords
         try{
           //current weather
-          const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${key}`);
+          const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${key}`,{ signal });
           if(!res.ok) throw new Error("Can't fetch location weather.");
           const data = await res.json();
           setWeather(data);
           setCity(data.name);
 
           //forcast weather
-          const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${key}`);
-          if(!forecastResponse.ok) throw new Error("Can't fetch forcast data. ");
+          const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${key}`,{ signal });
+          if(!forecastResponse.ok) throw new Error("Can't fetch forecast data. ");
 
           const forecastData = await forecastResponse.json();
 
@@ -162,6 +188,7 @@ const App = () => {
         }catch(err){
           setError(err.message)
           setForecast([])
+          setHourly([])
         }finally{
           setLoading(false);
         }
@@ -171,6 +198,20 @@ const App = () => {
         setLoading(false);
       }
     );
+  };
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+
+    if (outcome === "accepted") {
+      console.log("PWA installed");
+    }
+
+    setDeferredPrompt(null);
+    setShowInstall(false);
   };
 
   return (
@@ -192,16 +233,24 @@ const App = () => {
       />
       
       <div className=' flex items-start max-[1100px]:flex-wrap max-[1100px]:justify-center w-full max-sm:flex-wrap max-sm:items-center max-sm:w-full'>
-        {loading ? <WeatherSkeleton /> : <Card 
+        {loading && !weather ? <WeatherSkeleton /> : (<Card 
           weather={weather} 
           loading={loading} 
           error={error} 
           unit={unit} 
           setUnit={setUnit}
           hourly={hourly}
-        />}
-        {loading ? <ForecastSkeleton /> : <FiveDayForcast forecast={forecast} unit={unit}/>}
+        />)}
+        {loading && forecast.length === 0 ? <ForecastSkeleton /> : <FiveDayForcast forecast={forecast} unit={unit}/>}
       </div>
+      {showInstall && (
+          <button
+              onClick={handleInstall}
+              className="fixed bottom-6 right-6 z-50 bg-blue-500 hover:bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg transition-all"
+          >
+            📲 Install App
+          </button>
+      )}
     </div>
   )
 }
