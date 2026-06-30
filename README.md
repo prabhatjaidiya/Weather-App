@@ -104,12 +104,9 @@ npm run preview
 
 ## 📲 PWA Support
 
-* Installable on **Android, iOS, and Desktop**
-* Offline-ready (cached assets)
-* Auto-update enabled
-
-**iOS Install:**
-Share → Add to Home Screen
+- Installable Progressive Web App (PWA)
+- Supports mobile & desktop installation
+- Internet connection required for fetching weather data
 
 ---
 
