@@ -24,12 +24,25 @@ const App = () => {
   const controllerRef = useRef(null);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstall, setShowInstall] = useState(false);
+  const isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  const isInStandaloneIOS = window.navigator.standalone === true;
+  const [isStandalone, setIsStandalone] = useState(false);
+
+
+  useEffect(() => {
+    setIsStandalone(
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    );
+  }, []);
 
   useEffect(() => {
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
       return;
     }
+
+    controllerRef.current?.abort();
     if (city.trim()) fetchWeather(city);
   }, [unit]);
 
@@ -60,6 +73,17 @@ const App = () => {
     };
   }, []);
   
+  useEffect(() => {
+    const onInstalled = () => {
+      setShowInstall(false);
+      setDeferredPrompt(null);
+      console.log("App installed");
+    };
+
+    window.addEventListener("appinstalled", onInstalled);
+    return () => window.removeEventListener("appinstalled", onInstalled);
+  }, []);
+
   const handleInputChange = (e) => {
     const value = e.target.value
     setCity(value);
@@ -75,15 +99,21 @@ const App = () => {
     if (!cityName.trim()) return;
 
     controllerRef.current?.abort();
-    controllerRef.current = new AbortController();
-    const { signal } = controllerRef.current;
+
+
+    const controller = new AbortController();
+    controllerRef.current = controller;
+    const signal = controller.signal;
+
 
     const key = import.meta.env.VITE_OWM_API_KEY;
 
-    setLoading(true);
-    setError(null);
 
     try {
+      
+      setLoading(true);
+      setError(null);
+      
       // Current weather
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=${unit}&appid=${key}`,
@@ -93,9 +123,7 @@ const App = () => {
       if (!res.ok) throw new Error("City not found");
 
       const data = await res.json();
-      setWeather(data);
-      setCity(cityName);
-
+      
       //  Forecast
       const forecastResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${key}`,
@@ -105,26 +133,28 @@ const App = () => {
       if (!forecastResponse.ok) throw new Error("Forecast fetch failed");
 
       const forecastData = await forecastResponse.json();
-
-      const daily = forecastData.list
-        .filter(item => item.dt_txt.includes("12:00:00"))
-        .slice(0, 7);
-
-      setForecast(daily);
-
-      const hourlyData = forecastData.list.slice(0, 8);
-      setHourly(hourlyData);
-
+      
+      if(!signal.aborted){
+        setWeather(data);
+        setCity(cityName);
+        setHourly(forecastData.list.slice(0, 8));
+        setForecast(
+          forecastData.list
+          .filter(item => item.dt_txt.includes("12:00:00"))
+          .slice(0, 7)
+        );
+      }
+      
       // Local storage
       localStorage.setItem("lastCity", cityName);
 
       setRecentSearch(prev => {
-        const normalized = cityName.trim();
+        const normalized = cityName.trim().toLowerCase();
         const width = window.innerWidth;
 
         const updated = [
-          normalized,
-          ...prev.filter(c => c !== normalized),
+          cityName.trim(),
+          ...prev.filter(c => c.toLowerCase() !== normalized),
         ];
 
         const finalList = width >= 500
@@ -143,7 +173,9 @@ const App = () => {
         setHourly([]);
       }
     }finally{
-      setLoading(false)
+      if(!signal.aborted){
+        setLoading(false);
+      }
     }
   };
 
@@ -172,6 +204,7 @@ const App = () => {
           const data = await res.json();
           setWeather(data);
           setCity(data.name);
+          localStorage.setItem("lastCity", data.name);
 
           //forcast weather
           const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${key}`,{ signal });
@@ -190,7 +223,9 @@ const App = () => {
           setForecast([])
           setHourly([])
         }finally{
-          setLoading(false);
+          if(!signal.aborted){
+            setLoading(false);
+          }
         }
       },
       () => {
@@ -208,6 +243,8 @@ const App = () => {
 
     if (outcome === "accepted") {
       console.log("PWA installed");
+    }else {
+      console.log("User dismissed install");
     }
 
     setDeferredPrompt(null);
@@ -241,15 +278,20 @@ const App = () => {
           setUnit={setUnit}
           hourly={hourly}
         />)}
-        {loading && forecast.length === 0 ? <ForecastSkeleton /> : <FiveDayForcast forecast={forecast} unit={unit}/>}
+        {loading && !weather ? <ForecastSkeleton /> : <FiveDayForcast forecast={forecast} unit={unit}/>}
       </div>
-      {showInstall && (
+      {showInstall && !isStandalone && (
           <button
               onClick={handleInstall}
               className="fixed bottom-6 right-6 z-50 bg-blue-500 hover:bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg transition-all"
           >
             📲 Install App
           </button>
+      )}
+      {isIOS && !isInStandaloneIOS && !showInstall && (
+        <div className="fixed bottom-6 left-6 bg-black/80 text-white px-4 py-2 rounded-lg">
+          Tap <b>Share</b> → <b>Add to Home Screen</b>
+        </div>
       )}
     </div>
   )
