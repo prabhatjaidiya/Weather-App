@@ -9,10 +9,16 @@ import useWeather from "./hooks/useWeather";
 import useLocalStorage from "./hooks/useLocalStorage";
 import useDebounce from "./hooks/useDebounce";
 import usePWA from "./hooks/usePWA";
+import AirQuality from "./components/AirQuality";
+import TemperatureChart from "./components/TemperatureChart";
+import RainProbabilityChart from "./components/RainProbabilityChart";
+import { getWeatherInsights } from "./utils/weatherInsights";
+import WeatherInsights from "./components/WeatherInsights";
 
 
 const App = () => {
-  const { weather, loading, error, forecast, hourly, unit, setUnit, fetchWeather, handleGeolocate } = useWeather();
+  const { weather, loading, error, forecast, hourly, unit, setUnit, fetchWeather, handleGeolocate, airQuality } = useWeather();
+  const insights = getWeatherInsights(weather, airQuality, hourly);
   const { showInstall, isStandalone, isIOS, isInStandaloneIOS, handleInstall } = usePWA();
   const [city, setCity] = useState("");
   const [recentSearch, setRecentSearch] = useLocalStorage("recentSearch", []);
@@ -78,9 +84,18 @@ const App = () => {
   return (
     <div
       style={{
-        background: getBgGradient(weather?.weather?.[0]?.icon),
+        background: getBgGradient(weather?.icon),
       }}
-      className='min-h-screen w-full overflow-hidden bg-[#0B1120] text-[#F0F4FF] flex flex-col transition-all duration-500 ease-in-out will-change-[background]'>
+      className="
+      min-h-screen
+      w-full
+      text-[#F5F7FF]
+      flex flex-col
+      overflow-x-hidden
+      transition-all duration-700 ease-in-out
+      bg-[#07111F]
+    "
+    >
 
       <Navbar
         fetchWeather={fetchWeather}
@@ -92,30 +107,113 @@ const App = () => {
         loading={loading}
       />
 
-      <div className=' flex items-start max-[1100px]:flex-wrap max-[1100px]:justify-center w-full max-sm:flex-wrap max-sm:items-center max-sm:w-full'>
-        {loading && !weather ? <WeatherSkeleton /> : (<Card
-          weather={weather}
-          loading={loading}
-          error={error}
-          unit={unit}
-          setUnit={setUnit}
-          hourly={hourly}
-        />)}
-        {loading && !weather ? <ForecastSkeleton /> : <FiveDayForcast forecast={forecast} unit={unit} />}
-      </div>
+      <main className="
+      w-full
+      max-w-[1440px]
+      mx-auto
+      px-4 sm:px-6 lg:px-8
+      py-6 lg:py-8
+    ">
+
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)] gap-6 lg:gap-8 items-start">
+
+          {/* LEFT — Weather */}
+          <div className="min-w-0">
+            {loading && !weather ? (
+              <WeatherSkeleton />
+            ) : (
+              <Card
+                weather={weather}
+                loading={loading}
+                error={error}
+                unit={unit}
+                setUnit={setUnit}
+                hourly={hourly}
+              />
+            )}
+          </div>
+
+
+          {/* RIGHT — Forecast + Chart */}
+          <div className="min-w-0 flex flex-col gap-6">
+
+            {/* 5 Day Forecast */}
+            {loading && !weather ? (
+              <ForecastSkeleton />
+            ) : (
+              <FiveDayForcast
+                forecast={forecast}
+                unit={unit}
+              />
+            )}
+
+            {/* Temperature Chart */}
+            <TemperatureChart
+              hourly={hourly}
+              unit={unit}
+            />
+
+            <RainProbabilityChart
+              hourly={hourly}
+            />
+
+          </div>
+
+        </div>
+
+        {insights.length > 0 && (
+          <div className="mt-6 lg:mt-8">
+            <WeatherInsights insights={insights} />
+          </div>
+        )}
+
+        {airQuality && (
+          <div className="mt-6 lg:mt-8">
+            <AirQuality airQuality={airQuality} />
+          </div>
+        )}
+
+      </main>
+
       {showInstall && !isStandalone && (
         <button
           onClick={handleInstall}
-          className="fixed bottom-6 right-6 z-50 bg-blue-500 hover:bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg transition-all"
+          className="
+          fixed bottom-6 right-6 z-50
+          px-5 py-3
+          rounded-2xl
+          bg-white/10
+          backdrop-blur-xl
+          border border-white/15
+          text-white
+          font-medium
+          shadow-[0_10px_40px_rgba(0,0,0,0.3)]
+          hover:bg-white/15
+          hover:-translate-y-1
+          transition-all duration-300
+        "
         >
           📲 Install App
         </button>
       )}
+
       {isIOS && !isInStandaloneIOS && !showInstall && (
-        <div className="fixed bottom-6 left-6 bg-black/80 text-white px-4 py-2 rounded-lg">
+        <div className="
+        fixed bottom-6 left-6 z-50
+        max-w-[280px]
+        px-4 py-3
+        rounded-2xl
+        bg-white/10
+        backdrop-blur-xl
+        border border-white/10
+        text-sm
+        text-white/80
+        shadow-lg
+      ">
           Tap <b>Share</b> → <b>Add to Home Screen</b>
         </div>
       )}
+
     </div>
   )
 }

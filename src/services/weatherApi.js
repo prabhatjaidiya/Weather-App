@@ -2,9 +2,9 @@ const API_KEY = import.meta.env.VITE_OWM_API_KEY;
 
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
-export const getWeatherByCity = async (city, unit, signal) => {
+const getWeatherData = async (query, unit, signal) => {
   const weatherResponse = await fetch(
-    `${BASE_URL}/weather?q=${city}&units=${unit}&appid=${API_KEY}`,
+    `${BASE_URL}/weather?${query}&units=${unit}&appid=${API_KEY}`,
     { signal }
   );
 
@@ -15,7 +15,7 @@ export const getWeatherByCity = async (city, unit, signal) => {
   const weatherData = await weatherResponse.json();
 
   const forecastResponse = await fetch(
-    `${BASE_URL}/forecast?q=${city}&units=${unit}&appid=${API_KEY}`,
+    `${BASE_URL}/forecast?${query}&units=${unit}&appid=${API_KEY}`,
     { signal }
   );
 
@@ -23,7 +23,8 @@ export const getWeatherByCity = async (city, unit, signal) => {
     throw new Error("Forecast fetch failed");
   }
 
-  const forecastData = await forecastResponse.json();
+  const forecastData =
+    await forecastResponse.json();
 
   return {
     weather: weatherData,
@@ -31,36 +32,50 @@ export const getWeatherByCity = async (city, unit, signal) => {
   };
 };
 
-export const getWeatherByCoordinates = async (
+export const getWeatherByCity = (
+  city,
+  unit,
+  signal
+) => {
+  const query =
+    `q=${encodeURIComponent(city)}`;
+
+  return getWeatherData(
+    query,
+    unit,
+    signal
+  );
+};
+
+export const getWeatherByCoordinates = (
   latitude,
   longitude,
   unit,
   signal
 ) => {
-  const weatherResponse = await fetch(
-    `${BASE_URL}/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${API_KEY}`,
+  const query =
+    `lat=${latitude}&lon=${longitude}`;
+
+  return getWeatherData(
+    query,
+    unit,
+    signal
+  );
+};
+
+export const getAirQuality = async (
+  latitude,
+  longitude,
+  signal
+) => {
+  const response = await fetch(
+    `${BASE_URL}/air_pollution?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`,
     { signal }
   );
 
-  if (!weatherResponse.ok) {
-    throw new Error("Can't fetch location weather.");
+  if (!response.ok) {
+    throw new Error("Air quality fetch failed");
   }
 
-  const weatherData = await weatherResponse.json();
-
-  const forecastResponse = await fetch(
-    `${BASE_URL}/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${API_KEY}`,
-    { signal }
-  );
-
-  if (!forecastResponse.ok) {
-    throw new Error("Can't fetch forecast data.");
-  }
-
-  const forecastData = await forecastResponse.json();
-
-  return {
-    weather: weatherData,
-    forecast: forecastData,
-  };
+  return response.json();
 };

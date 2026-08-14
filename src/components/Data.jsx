@@ -1,15 +1,56 @@
-import React from 'react'
+import React from "react";
 
 const Data = ({ icon, data, text }) => {
   return (
-      <div className='h-28 w-52 max-sm:h-0 max-sm:w-32 flex gap-4 p-12 md:py-1 md:px-3 max-sm:px-3 max-sm:h-30 w-70 h-30 max-w-60 justify-center items-center bg-[rgba(255,255,255,0.05)] border border-[rgba(74,144,217,0.18)] rounded-2xl'>
-        {icon}
-        <div>
-          <p className='text-[#A8C8F0] text-sm md:text-md max-sm:text-sm'>{text}</p>
-          <p className='text-[#F0F4FF] text-sm font-normal md:text-xl max-sm:text-4sm'>{data}</p>
-        </div>
-      </div>
-  )
-}
+    <div
+      className="
+        group
+        min-w-0
+        rounded-2xl
+        p-3.5
+        sm:p-4
+        bg-white/[0.035]
+        border border-white/[0.06]
+        hover:bg-white/[0.06]
+        hover:border-white/[0.10]
+        transition-all
+        duration-300
+      "
+    >
 
-export default Data
+      <div className="
+        flex
+        items-center
+        gap-2
+        text-white/35
+        group-hover:text-white/55
+        transition-colors
+      ">
+        {icon}
+
+        <span className="
+          text-[10px]
+          sm:text-xs
+          text-white/35
+          truncate
+        ">
+          {text}
+        </span>
+      </div>
+
+      <p className="
+        mt-2
+        text-sm
+        sm:text-lg
+        font-medium
+        text-white/85
+        truncate
+      ">
+        {data}
+      </p>
+
+    </div>
+  );
+};
+
+export default Data;

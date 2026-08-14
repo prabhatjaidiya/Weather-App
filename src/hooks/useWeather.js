@@ -2,21 +2,43 @@ import { useRef, useState } from "react";
 import {
     getWeatherByCity,
     getWeatherByCoordinates,
+    getAirQuality,
 } from "../services/weatherApi";
 import {
     getHourlyForecast,
     getDailyForecast,
 } from "../utils/forecastUtils";
+import { normalizeWeather } from "../utils/weatherUtils";
 
 const useWeather = () => {
     const [weather, setWeather] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [airQuality, setAirQuality] = useState(null);
     const [error, setError] = useState(null);
     const [unit, setUnit] = useState("metric");
     const [forecast, setForecast] = useState([]);
     const [hourly, setHourly] = useState([]);
 
     const controllerRef = useRef(null);
+
+    const fetchAirQuality = async (latitude, longitude, signal) => {
+        try {
+            const data = await getAirQuality(
+                latitude,
+                longitude,
+                signal
+            );
+
+            if (!signal.aborted) {
+                setAirQuality(data);
+            }
+        } catch (err) {
+            if (err.name !== "AbortError") {
+                console.error("Air quality error:", err);
+                setAirQuality(null);
+            }
+        }
+    };
 
     const fetchWeather = async (cityName) => {
         if (!cityName.trim()) return;
@@ -41,7 +63,16 @@ const useWeather = () => {
             const forecastData = data.forecast;
 
             if (!signal.aborted) {
-                setWeather(data.weather);
+                const normalizedWeather =
+                    normalizeWeather(data.weather);
+
+                setWeather(normalizedWeather);
+
+                fetchAirQuality(
+                    normalizedWeather.coordinates.latitude,
+                    normalizedWeather.coordinates.longitude,
+                    signal
+                );
 
                 setHourly(
                     getHourlyForecast(forecastData.list)
@@ -102,14 +133,15 @@ const useWeather = () => {
 
                     if (signal.aborted) return;
 
-                    setWeather(data.weather);
+                    const normalizedWeather =
+                        normalizeWeather(data.weather);
 
-                    setHourly(
-                        getHourlyForecast(data.forecast.list)
-                    );
+                    setWeather(normalizedWeather);
 
-                    setForecast(
-                        getDailyForecast(data.forecast.list)
+                    fetchAirQuality(
+                        normalizedWeather.coordinates.latitude,
+                        normalizedWeather.coordinates.longitude,
+                        signal
                     );
 
                     return data.weather.name;
@@ -143,11 +175,11 @@ const useWeather = () => {
         error,
         forecast,
         hourly,
+        airQuality,
         unit,
         setUnit,
         fetchWeather,
         handleGeolocate,
-        controllerRef,
     };
 };
 
