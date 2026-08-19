@@ -9,6 +9,7 @@ import {
     getDailyForecast,
 } from "../utils/forecastUtils";
 import { normalizeWeather } from "../utils/weatherUtils";
+import { getWeatherErrorMessage } from "../utils/weatherErrors";
 
 const useWeather = () => {
     const [weather, setWeather] = useState(null);
@@ -87,10 +88,17 @@ const useWeather = () => {
 
         } catch (err) {
             if (err.name !== "AbortError") {
-                setError(
-                    err.message || "Failed to fetch data"
-                );
+                const errorCode =
+                    err instanceof TypeError
+                        ? "NETWORK_ERROR"
+                        : err.message;
+                const errorInfo =
+                    getWeatherErrorMessage(errorCode);
 
+                setError(errorInfo);
+
+                setWeather(null);
+                setAirQuality(null);
                 setForecast([]);
                 setHourly([]);
 
@@ -148,7 +156,18 @@ const useWeather = () => {
 
                 } catch (err) {
                     if (err.name !== "AbortError") {
-                        setError(err.message);
+                        const errorCode =
+                            err instanceof TypeError
+                                ? "NETWORK_ERROR"
+                                : err.message;
+
+                        const errorInfo =
+                            getWeatherErrorMessage(errorCode);
+
+                        setError(errorInfo);
+
+                        setWeather(null);
+                        setAirQuality(null);
                         setForecast([]);
                         setHourly([]);
                     }
@@ -159,11 +178,43 @@ const useWeather = () => {
                 }
             },
 
-            () => {
-                setError(
-                    "Location access denied. Enter a city manually."
-                );
+            (error) => {
+                let errorInfo;
 
+                switch (error.code) {
+                    case 1:
+                        errorInfo = {
+                            title: "Location permission denied",
+                            message:
+                                "Allow location access in your browser settings or search for a city manually.",
+                        };
+                        break;
+
+                    case 2:
+                        errorInfo = {
+                            title: "Location unavailable",
+                            message:
+                                "We couldn't determine your current location. Please try again or search for a city manually.",
+                        };
+                        break;
+
+                    case 3:
+                        errorInfo = {
+                            title: "Location request timed out",
+                            message:
+                                "Getting your location took too long. Please try again.",
+                        };
+                        break;
+
+                    default:
+                        errorInfo = {
+                            title: "Unable to get your location",
+                            message:
+                                "Please try again or search for a city manually.",
+                        };
+                }
+
+                setError(errorInfo);
                 setLoading(false);
             }
         );

@@ -17,6 +17,9 @@ const Card = ({
   unit,
   setUnit,
   hourly,
+  toggleFavorite,
+  isFavorite,
+  retryWeather,
 }) => {
   if (!loading && !weather && !error) {
     return (
@@ -57,30 +60,88 @@ const Card = ({
     return (
       <div
         className="
-          w-full min-h-[520px]
-          rounded-[28px]
-          p-6
-          flex flex-col
-          justify-center
-          items-center
-          text-center
-          bg-white/[0.06]
-          backdrop-blur-2xl
-          border border-red-400/10
-          shadow-[0_20px_80px_rgba(0,0,0,0.25)]
-        "
+        w-full
+        min-h-[520px]
+        rounded-[28px]
+        p-6 sm:p-8
+        flex
+        flex-col
+        justify-center
+        items-center
+        text-center
+        bg-white/[0.06]
+        backdrop-blur-2xl
+        border border-white/[0.08]
+        shadow-[0_20px_80px_rgba(0,0,0,0.25)]
+      "
       >
-        <div className="text-5xl mb-5">
-          🌧️
+        {/* Icon */}
+        <div
+          className="
+          h-16
+          w-16
+          rounded-2xl
+          flex
+          items-center
+          justify-center
+          bg-red-400/[0.08]
+          border border-red-300/[0.10]
+          mb-5
+        "
+        >
+          <span className="text-3xl">
+            ⚠️
+          </span>
         </div>
 
-        <h2 className="text-xl sm:text-2xl font-semibold text-red-300">
-          Unable to fetch weather
+        {/* Title */}
+        <h2
+          className="
+          text-xl
+          sm:text-2xl
+          font-semibold
+          text-white
+        "
+        >
+          {error.title}
         </h2>
 
-        <p className="mt-2 text-sm text-white/40 max-w-sm">
-          {error}
+        {/* Message */}
+        <p
+          className="
+          mt-3
+          max-w-md
+          text-sm
+          sm:text-base
+          leading-relaxed
+          text-white/40
+        "
+        >
+          {error.message}
         </p>
+
+        {/* Retry */}
+        <button
+          type="button"
+          onClick={retryWeather}
+          className="
+          mt-6
+          px-5
+          py-2.5
+          rounded-xl
+          bg-white/[0.08]
+          border border-white/[0.10]
+          text-sm
+          font-medium
+          text-white/70
+          hover:bg-white/[0.13]
+          hover:text-white
+          hover:-translate-y-0.5
+          transition-all duration-300
+        "
+        >
+          Try Again
+        </button>
       </div>
     );
   }
@@ -181,23 +242,48 @@ const Card = ({
               >
 
                 {/* LOCATION */}
-                <h1
-                  className="
-              min-w-0
-              text-4xl
-              sm:text-5xl
-              font-light
-              tracking-[-0.045em]
-              leading-none
-              text-white
-              truncate
+                <div className="flex items-center gap-3">
+                  <h1
+                    className="
+      text-5xl
+      sm:text-6xl
+      lg:text-[64px]
+      leading-none
+      font-light
+      tracking-[-0.045em]
+      text-white
+      truncate
+    "
+                  >
+                    {weather?.city}
+                  </h1>
 
-              lg:mt-5
-              lg:text-[64px]
-            "
-                >
-                  {weather?.city}
-                </h1>
+                  <button
+                    type="button"
+                    onClick={() => toggleFavorite()}
+                    aria-label={
+                      isFavorite
+                        ? "Remove from favorites"
+                        : "Add to favorites"
+                    }
+                    className={`
+      shrink-0
+      h-10 w-10
+      rounded-full
+      flex items-center justify-center
+      border
+      transition-all duration-300
+      ${isFavorite
+                        ? "bg-yellow-400/10 border-yellow-300/20 text-yellow-300"
+                        : "bg-white/[0.04] border-white/[0.08] text-white/30 hover:text-yellow-300 hover:bg-yellow-300/10"
+                      }
+    `}
+                  >
+                    <span className="text-xl">
+                      {isFavorite ? "★" : "☆"}
+                    </span>
+                  </button>
+                </div>
 
 
                 {/* MOBILE / TABLET TEMPERATURE */}

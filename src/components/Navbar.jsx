@@ -12,8 +12,13 @@ const Navbar = ({
     recentSearch,
     loading,
     handleInputChange,
+    suggestions,
+    loadingSuggestions,
+    handleSuggestionSelect,
 }) => {
     const [searchFocused, setSearchFocused] = useState(false);
+    const [activeSuggestion, setActiveSuggestion] = useState(-1);
+    
 
     const handleSubmit = () => {
         if (!city.trim() || loading) return;

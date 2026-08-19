@@ -9,7 +9,27 @@ const getWeatherData = async (query, unit, signal) => {
   );
 
   if (!weatherResponse.ok) {
-    throw new Error("City not found");
+    if (weatherResponse.status === 404) {
+      throw new Error(
+        "CITY_NOT_FOUND"
+      );
+    }
+
+    if (weatherResponse.status === 401) {
+      throw new Error(
+        "INVALID_API_KEY"
+      );
+    }
+
+    if (weatherResponse.status === 429) {
+      throw new Error(
+        "API_LIMIT_REACHED"
+      );
+    }
+
+    throw new Error(
+      "WEATHER_SERVICE_ERROR"
+    );
   }
 
   const weatherData = await weatherResponse.json();
@@ -20,7 +40,15 @@ const getWeatherData = async (query, unit, signal) => {
   );
 
   if (!forecastResponse.ok) {
-    throw new Error("Forecast fetch failed");
+    if (forecastResponse.status === 429) {
+      throw new Error(
+        "API_LIMIT_REACHED"
+      );
+    }
+
+    throw new Error(
+      "FORECAST_SERVICE_ERROR"
+    );
   }
 
   const forecastData =
@@ -45,6 +73,26 @@ export const getWeatherByCity = (
     unit,
     signal
   );
+};
+
+export const getCitySuggestions = async (
+  city,
+  signal
+) => {
+  if (!city.trim()) return [];
+
+  const response = await fetch(
+    `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+      city
+    )}&limit=5&appid=${API_KEY}`,
+    { signal }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch city suggestions");
+  }
+
+  return response.json();
 };
 
 export const getWeatherByCoordinates = (

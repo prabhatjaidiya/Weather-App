@@ -14,6 +14,9 @@ import TemperatureChart from "./components/TemperatureChart";
 import RainProbabilityChart from "./components/RainProbabilityChart";
 import { getWeatherInsights } from "./utils/weatherInsights";
 import WeatherInsights from "./components/WeatherInsights";
+import FavoriteCities from "./components/FavoriteCities";
+import useFavorites from "./hooks/useFavorites";
+import useRecentSearch from "./hooks/useRecentSearch";
 
 
 const App = () => {
@@ -21,9 +24,10 @@ const App = () => {
   const insights = getWeatherInsights(weather, airQuality, hourly);
   const { showInstall, isStandalone, isIOS, isInStandaloneIOS, handleInstall } = usePWA();
   const [city, setCity] = useState("");
-  const [recentSearch, setRecentSearch] = useLocalStorage("recentSearch", []);
+  const { recentSearch, saveRecentSearch } = useRecentSearch();
   const [lastCity, setLastCity] = useLocalStorage("lastCity", "");
   const isInitialLoad = useRef(true);
+  const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
   useEffect(() => {
     if (isInitialLoad.current) {
@@ -41,24 +45,6 @@ const App = () => {
     }
   }, []);
 
-
-  const saveRecentSearch = (cityName) => {
-    const normalized = cityName.trim().toLowerCase();
-    const width = window.innerWidth;
-
-    setRecentSearch((prev) => {
-      const updated = [
-        cityName.trim(),
-        ...prev.filter(
-          (c) => c.toLowerCase() !== normalized
-        ),
-      ];
-
-      return width >= 500
-        ? updated.slice(0, 5)
-        : updated.slice(0, 2);
-    });
-  };
 
   const debouncedSearch = useDebounce(async (value) => {
     if (!value.trim()) return;
@@ -87,7 +73,7 @@ const App = () => {
         background: getBgGradient(weather?.icon),
       }}
       className="
-      min-h-screen
+      h-full
       w-full
       text-[#F5F7FF]
       flex flex-col
@@ -114,8 +100,15 @@ const App = () => {
       px-4 sm:px-6 lg:px-8
       py-6 lg:py-8
     ">
+        <FavoriteCities
+          favorites={favorites}
+          setCity={setCity}
+          setLastCity={setLastCity}
+          fetchWeather={fetchWeather}
+          toggleFavorite={toggleFavorite}
+        />
 
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)] gap-6 lg:gap-8 items-start">
+        <div className="mt-5 grid grid-cols-1 xl:grid-cols-[minmax(0,1.45fr)_minmax(360px,0.75fr)] gap-6 lg:gap-8 items-start">
 
           {/* LEFT — Weather */}
           <div className="min-w-0">
@@ -129,6 +122,11 @@ const App = () => {
                 unit={unit}
                 setUnit={setUnit}
                 hourly={hourly}
+                toggleFavorite={() =>
+                  toggleFavorite(weather?.city)
+                }
+                isFavorite={isFavorite(weather?.city)}
+                retryWeather={() => fetchWeather(city)}
               />
             )}
           </div>
@@ -161,17 +159,18 @@ const App = () => {
 
         </div>
 
-        {insights.length > 0 && (
-          <div className="mt-6 lg:mt-8">
-            <WeatherInsights insights={insights} />
-          </div>
-        )}
-
-        {airQuality && (
-          <div className="mt-6 lg:mt-8">
-            <AirQuality airQuality={airQuality} />
-          </div>
-        )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-6">
+          {airQuality && (
+            <div className="mt-6 lg:mt-8">
+              <AirQuality airQuality={airQuality} />
+            </div>
+          )}
+          {insights.length > 0 && (
+            <div className="mt-6 lg:mt-8">
+              <WeatherInsights insights={insights} />
+            </div>
+          )}
+        </div>
 
       </main>
 

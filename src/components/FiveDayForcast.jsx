@@ -31,9 +31,11 @@ const FiveDayForcast = ({ forecast, unit }) => {
                 weekday: "short"
               })}
               icon={f.icon}
+              description={f.description}
               high={Math.round(f.high)}
               low={Math.round(f.low)}
               rainProbability={f.rainProbability}
+              windSpeed={Number(f.windSpeed).toFixed(1)}
               unit={unit}
             />
           ))
