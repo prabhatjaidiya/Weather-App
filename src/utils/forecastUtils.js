@@ -1,27 +1,46 @@
-export const getHourlyForecast = (forecastList) => {
-    return forecastList.slice(0, 8).map((item) => ({
-        id: item.dt,
-        timestamp: item.dt,
+export const getHourlyForecast = (
+    forecastList,
+    timezoneOffset = 0
+) => {
+    return forecastList.slice(0, 8).map((item) => {
+        const localTimestamp =
+            item.dt + timezoneOffset;
 
-        temperature: item.main.temp,
+        return {
+            id: item.dt,
+            timestamp: item.dt,
+            localTimestamp,
 
-        icon: item.weather[0].icon,
+            temperature: item.main.temp,
+            feelsLike: item.main.feels_like,
 
-        description: item.weather[0].description,
+            icon: item.weather[0].icon,
 
-        rainProbability: Math.round(
-            (item.pop || 0) * 100
-        ),
+            description:
+                item.weather[0].description,
 
-        windSpeed: item.wind?.speed ?? 0,
-    }));
+            rainProbability: Math.round(
+                (item.pop || 0) * 100
+            ),
+
+            windSpeed:
+                item.wind?.speed ?? 0,
+        };
+    });
 };
 
-export const getDailyForecast = (forecastList) => {
+export const getDailyForecast = (forecastList, timezoneOffset = 0) => {
     const days = {};
 
     forecastList.forEach((item) => {
-        const date = item.dt_txt.split(" ")[0];
+        const localTimestamp =
+            item.dt + timezoneOffset;
+
+        const date = new Date(
+            localTimestamp * 1000
+        )
+            .toISOString()
+            .split("T")[0];
 
         if (!days[date]) {
             days[date] = [];
@@ -31,12 +50,24 @@ export const getDailyForecast = (forecastList) => {
     });
 
     return Object.entries(days)
+        .sort(([dateA], [dateB]) =>
+            dateA.localeCompare(dateB)
+        )
         .slice(0, 5)
         .map(([date, items]) => {
+
             const midday =
-                items.find((item) =>
-                    item.dt_txt.includes("12:00:00")
-                ) || items[Math.floor(items.length / 2)];
+                items.find((item) => {
+                    const localTimestamp =
+                        item.dt + timezoneOffset;
+
+                    return (
+                        new Date(
+                            localTimestamp * 1000
+                        ).getUTCHours() === 12
+                    );
+                }) ||
+                items[Math.floor(items.length / 2)];
 
             const temperatures = items.map(
                 (item) => item.main.temp
@@ -58,14 +89,18 @@ export const getDailyForecast = (forecastList) => {
                 low: Math.min(...temperatures),
 
                 icon: midday.weather[0].icon,
-                description: midday.weather[0].description,
+                description:
+                    midday.weather[0].description,
 
                 rainProbability: Math.round(
                     Math.max(...rainProbabilities)
                 ),
 
-                humidity: midday.main.humidity,
-                windSpeed: midday.wind.speed,
+                humidity:
+                    midday.main.humidity,
+
+                windSpeed:
+                    midday.wind?.speed ?? 0,
             };
         });
 };

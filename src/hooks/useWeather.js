@@ -76,11 +76,11 @@ const useWeather = () => {
                 );
 
                 setHourly(
-                    getHourlyForecast(forecastData.list)
+                    getHourlyForecast(forecastData.list, data.weather.timezone)
                 );
 
                 setForecast(
-                    getDailyForecast(forecastData.list)
+                    getDailyForecast(forecastData.list, data.weather.timezone)
                 );
 
                 return true;

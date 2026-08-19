@@ -12,13 +12,35 @@ import {
 const RainProbabilityChart = ({ hourly }) => {
   if (!hourly?.length) return null;
 
-  const data = hourly.map((item) => ({
-    time: new Date(item.timestamp * 1000).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      hour12: true,
-    }),
+  const data = hourly.map((item, index) => ({
+    time:
+      index === 0
+        ? "Now"
+        : new Date(
+          item.localTimestamp * 1000
+        ).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          hour12: true,
+          timeZone: "UTC",
+        }),
+
     rain: item.rainProbability ?? 0,
   }));
+
+  const rainValues = data.map((item) => item.rain);
+
+  const maxRain = Math.max(...rainValues);
+
+  const averageRain = Math.round(
+    rainValues.reduce(
+      (sum, value) => sum + value,
+      0
+    ) / rainValues.length
+  );
+
+  const highRiskHours = rainValues.filter(
+    (value) => value >= 50
+  ).length;
 
   return (
     <div
@@ -33,23 +55,60 @@ const RainProbabilityChart = ({ hourly }) => {
       "
     >
       <div className="mb-5">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-          Precipitation
-        </p>
 
-        <h2 className="text-xl font-semibold mt-1">
-          Rain Probability
-        </h2>
+        <div className="flex items-end justify-between gap-4">
+
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Precipitation
+            </p>
+
+            <h2 className="text-xl font-semibold mt-1">
+              Rain Probability
+            </h2>
+          </div>
+
+          <div className="text-right">
+            <p className="text-2xl font-semibold">
+              {maxRain}%
+            </p>
+
+            <p className="text-[11px] text-white/35">
+              highest chance
+            </p>
+          </div>
+
+        </div>
+
+        <div className="
+    mt-4
+    flex
+    items-center
+    gap-4
+    text-xs
+    text-white/45
+    flex-wrap
+  ">
+          <span>
+            Avg {averageRain}%
+          </span>
+
+          <span>
+            {highRiskHours}{" "}
+            {highRiskHours === 1 ? "hour" : "hours"} ≥ 50%
+          </span>
+        </div>
+
       </div>
 
-      <div className="h-[240px] w-full">
+      <div className="h-[220px] sm:h-[240px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             margin={{
               top: 10,
               right: 5,
-              left: -15,
+              left: -10,
               bottom: 5,
             }}
           >
@@ -60,6 +119,7 @@ const RainProbabilityChart = ({ hourly }) => {
 
             <XAxis
               dataKey="time"
+              interval="preserveStartEnd"
               axisLine={false}
               tickLine={false}
               tick={{
@@ -70,6 +130,7 @@ const RainProbabilityChart = ({ hourly }) => {
 
             <YAxis
               domain={[0, 100]}
+              ticks={[0, 25, 50, 75, 100]}
               axisLine={false}
               tickLine={false}
               tick={{
@@ -90,7 +151,7 @@ const RainProbabilityChart = ({ hourly }) => {
               }}
               formatter={(value) => [
                 `${value}%`,
-                "Rain probability",
+                "Chance of rain",
               ]}
             />
 

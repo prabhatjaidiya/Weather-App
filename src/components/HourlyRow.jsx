@@ -39,10 +39,9 @@ const HourlyRow = ({ hourly, unit }) => {
             transition-all
             duration-300
 
-            ${
-              index === 0
-                ? "bg-white/[0.09] border-white/[0.12]"
-                : "bg-white/[0.035] border-white/[0.06] hover:bg-white/[0.07] hover:border-white/[0.10]"
+            ${index === 0
+              ? "bg-white/[0.09] border-white/[0.12]"
+              : "bg-white/[0.035] border-white/[0.06] hover:bg-white/[0.07] hover:border-white/[0.10]"
             }
           `}
         >
@@ -51,13 +50,16 @@ const HourlyRow = ({ hourly, unit }) => {
           <span className="text-[11px] sm:text-xs text-white/45">
             {index === 0
               ? "Now"
-              : new Date(h.timestamp * 1000).toLocaleTimeString(
-                  "en-US",
-                  {
-                    hour: "numeric",
-                    hour12: true,
-                  }
-                )}
+              : new Date(
+                h.localTimestamp * 1000
+              ).toLocaleTimeString(
+                "en-US",
+                {
+                  hour: "numeric",
+                  hour12: true,
+                  timeZone: "UTC",
+                }
+              )}
           </span>
 
           {/* ICON */}

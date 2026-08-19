@@ -3,6 +3,8 @@ export const normalizeWeather = (weather) => {
         city: weather.name,
         country: weather.sys?.country,
 
+        timezone: weather.timezone,
+
         temperature: weather.main?.temp,
         feelsLike: weather.main?.feels_like,
         tempMin: weather.main?.temp_min,
@@ -11,9 +13,9 @@ export const normalizeWeather = (weather) => {
         humidity: weather.main?.humidity,
         pressure: weather.main?.pressure,
 
-        windSpeed: weather.wind?.speed,
+        windSpeed: weather.wind?.speed ?? 0,
         windDirection: weather.wind?.deg,
-        windGust: weather.wind?.gust,
+        windGust: weather.wind?.gust ?? 0,
 
         condition: weather.weather?.[0]?.main,
         description: weather.weather?.[0]?.description,

@@ -1,14 +1,29 @@
 import React, { useEffect, useState } from "react";
 
 const SunriseSunsetCard = ({ weather }) => {
-  const sunrise = {
-    h: new Date(weather.sunrise * 1000).getHours(),
-    m: new Date(weather.sunrise * 1000).getMinutes(),
+  const getLocalDate = (timestamp) => {
+    return new Date(
+      (timestamp + weather.timezone) * 1000
+    );
+  };
+  const getCurrentCityTime = () => {
+    return new Date(
+      Date.now() + weather.timezone * 1000
+    );
   };
 
+  const sunriseDate = getLocalDate(weather.sunrise);
+
+  const sunrise = {
+    h: sunriseDate.getUTCHours(),
+    m: sunriseDate.getUTCMinutes(),
+  };
+
+  const sunsetDate = getLocalDate(weather.sunset);
+
   const sunset = {
-    h: new Date(weather.sunset * 1000).getHours(),
-    m: new Date(weather.sunset * 1000).getMinutes(),
+    h: sunsetDate.getUTCHours(),
+    m: sunsetDate.getUTCMinutes(),
   };
 
   function toMin(h, m) {
@@ -21,8 +36,8 @@ const SunriseSunsetCard = ({ weather }) => {
     return `${((h % 12) || 12)
       .toString()
       .padStart(2, "0")}:${m
-      .toString()
-      .padStart(2, "0")} ${ap}`;
+        .toString()
+        .padStart(2, "0")} ${ap}`;
   }
 
   const SR = toMin(sunrise.h, sunrise.m);
@@ -41,7 +56,12 @@ const SunriseSunsetCard = ({ weather }) => {
     return () => clearInterval(id);
   }, []);
 
-  const cur = toMin(now.getHours(), now.getMinutes());
+  const cityNow = getCurrentCityTime();
+
+  const cur = toMin(
+    cityNow.getUTCHours(),
+    cityNow.getUTCMinutes()
+  );
 
   const isDay = cur >= SR && cur < SS;
 
@@ -115,8 +135,8 @@ const SunriseSunsetCard = ({ weather }) => {
     : fmt(sunrise.h, sunrise.m);
 
   const nowStr = fmt(
-    now.getHours(),
-    now.getMinutes()
+    cityNow.getUTCHours(),
+    cityNow.getUTCMinutes()
   );
 
   const arcTicks = [
