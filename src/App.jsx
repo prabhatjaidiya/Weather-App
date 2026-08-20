@@ -17,11 +17,14 @@ import WeatherInsights from "./components/WeatherInsights";
 import FavoriteCities from "./components/FavoriteCities";
 import useFavorites from "./hooks/useFavorites";
 import useRecentSearch from "./hooks/useRecentSearch";
+import { getWeatherAlerts } from "./utils/weatherAlerts";
+import WeatherAlerts from "./components/WeatherAlerts";
 
 
 const App = () => {
   const { weather, loading, error, forecast, hourly, unit, setUnit, fetchWeather, handleGeolocate, airQuality } = useWeather();
   const insights = getWeatherInsights(weather, airQuality, hourly);
+  const alerts = getWeatherAlerts(weather, airQuality, hourly);
   const { showInstall, isStandalone, isIOS, isInStandaloneIOS, handleInstall } = usePWA();
   const [city, setCity] = useState("");
   const { recentSearch, saveRecentSearch } = useRecentSearch();
@@ -122,6 +125,7 @@ const App = () => {
                 unit={unit}
                 setUnit={setUnit}
                 hourly={hourly}
+                airQuality={airQuality}
                 toggleFavorite={() =>
                   toggleFavorite(weather?.city)
                 }
@@ -154,22 +158,17 @@ const App = () => {
             <RainProbabilityChart
               hourly={hourly}
             />
+            
+            {alerts.length > 0 && (
+              <WeatherAlerts alerts={alerts} />
+            )}
+
+            {insights.length > 0 && (
+              <WeatherInsights insights={insights} />
+            )}
 
           </div>
 
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-6">
-          {airQuality && (
-            <div className="mt-6 lg:mt-8">
-              <AirQuality airQuality={airQuality} />
-            </div>
-          )}
-          {insights.length > 0 && (
-            <div className="mt-6 lg:mt-8">
-              <WeatherInsights insights={insights} />
-            </div>
-          )}
         </div>
 
       </main>

@@ -14,13 +14,17 @@ const AirQuality = ({ airQuality }) => {
   return (
     <section
       className="
-        w-full
-        rounded-[28px]
-        p-5 sm:p-7 lg:p-8
-        bg-white/[0.07]
-        backdrop-blur-2xl
-        border border-white/[0.10]
-        shadow-[0_20px_80px_rgba(0,0,0,0.25)]
+        group
+        min-w-0
+        rounded-2xl
+        p-3.5
+        sm:p-4
+        bg-white/[0.035]
+        border border-white/[0.06]
+        hover:bg-white/[0.06]
+        hover:border-white/[0.10]
+        transition-all
+        duration-300
       "
     >
       {/* Header */}

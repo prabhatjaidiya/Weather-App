@@ -9,35 +9,13 @@ import { FaEye } from "react-icons/fa";
 import HourlyRow from "./HourlyRow";
 import SunriseSunsetCard from "./SunriseSunsetCard";
 import WeatherAnimation from "./WeatherAnimation";
+import AirQuality from "./AirQuality";
 
-const Card = ({
-  weather,
-  loading,
-  error,
-  unit,
-  setUnit,
-  hourly,
-  toggleFavorite,
-  isFavorite,
-  retryWeather,
-}) => {
+const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, isFavorite, retryWeather, airQuality }) => {
   if (!loading && !weather && !error) {
     return (
       <div
-        className="
-          w-full min-h-[520px]
-          rounded-[28px]
-          p-6
-          flex flex-col
-          justify-center
-          items-center
-          gap-5
-          bg-white/[0.06]
-          backdrop-blur-2xl
-          border border-white/[0.08]
-          shadow-[0_20px_80px_rgba(0,0,0,0.25)]
-          text-center
-        "
+        className="w-full min-h-[520px] rounded-[28px] p-6 flex flex-col justify-center items-center gap-5 bg-white/[0.06] backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_80px_rgba(0,0,0,0.25)] text-center"
       >
         <div className="text-[110px] sm:text-[140px] leading-none">
           🌎
@@ -59,35 +37,11 @@ const Card = ({
   if (error) {
     return (
       <div
-        className="
-        w-full
-        min-h-[520px]
-        rounded-[28px]
-        p-6 sm:p-8
-        flex
-        flex-col
-        justify-center
-        items-center
-        text-center
-        bg-white/[0.06]
-        backdrop-blur-2xl
-        border border-white/[0.08]
-        shadow-[0_20px_80px_rgba(0,0,0,0.25)]
-      "
+        className="w-full min-h-[520px] rounded-[28px] p-6 sm:p-8 flex flex-col justify-center items-center text-center bg-white/[0.06] backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_80px_rgba(0,0,0,0.25)]"
       >
         {/* Icon */}
         <div
-          className="
-          h-16
-          w-16
-          rounded-2xl
-          flex
-          items-center
-          justify-center
-          bg-red-400/[0.08]
-          border border-red-300/[0.10]
-          mb-5
-        "
+          className="h-16 w-16 rounded-2xl flex items-center justify-center bg-red-400/[0.08] border border-red-300/[0.10] mb-5"
         >
           <span className="text-3xl">
             ⚠️
@@ -96,26 +50,14 @@ const Card = ({
 
         {/* Title */}
         <h2
-          className="
-          text-xl
-          sm:text-2xl
-          font-semibold
-          text-white
-        "
+          className="text-xl sm:text-2xl font-semibold text-white"
         >
           {error.title}
         </h2>
 
         {/* Message */}
         <p
-          className="
-          mt-3
-          max-w-md
-          text-sm
-          sm:text-base
-          leading-relaxed
-          text-white/40
-        "
+          className="mt-3 max-w-md text-sm sm:text-base leading-relaxed text-white/40"
         >
           {error.message}
         </p>
@@ -124,21 +66,7 @@ const Card = ({
         <button
           type="button"
           onClick={retryWeather}
-          className="
-          mt-6
-          px-5
-          py-2.5
-          rounded-xl
-          bg-white/[0.08]
-          border border-white/[0.10]
-          text-sm
-          font-medium
-          text-white/70
-          hover:bg-white/[0.13]
-          hover:text-white
-          hover:-translate-y-0.5
-          transition-all duration-300
-        "
+          className="mt-6 px-5 py-2.5 rounded-xl bg-white/[0.08] border border-white/[0.10] text-sm font-medium text-white/70 hover:bg-white/[0.13] hover:text-white hover:-translate-y-0.5 transition-all duration-300"
         >
           Try Again
         </button>
@@ -148,17 +76,7 @@ const Card = ({
 
   return (
     <div
-      className={`
-        ${loading ? "opacity-70 blur-[0.5px]" : ""}
-        w-full
-        rounded-[28px]
-        p-5 sm:p-7 lg:p-8
-        bg-white/[0.07]
-        backdrop-blur-2xl
-        border border-white/[0.10]
-        shadow-[0_20px_80px_rgba(0,0,0,0.25)]
-        transition-all duration-500
-      `}
+      className={`${loading ? "opacity-70 blur-[0.5px]" : ""} w-full rounded-[28px] p-5 sm:p-7 lg:p-8 bg-white/[0.07] backdrop-blur-2xl border border-white/[0.10] shadow-[0_20px_80px_rgba(0,0,0,0.25)] transition-all duration-500`}
     >
 
       {/* PREMIUM WEATHER HERO */}
@@ -166,31 +84,11 @@ const Card = ({
 
         {/* Ambient glow */}
         <div
-          className="
-      pointer-events-none
-      absolute
-      -top-32
-      right-0
-      h-72
-      w-72
-      rounded-full
-      bg-sky-400/[0.04]
-      blur-3xl
-    "
+          className="pointer-events-none absolute -top-32 right-0 h-72 w-72 rounded-full bg-sky-400/[0.04] blur-3xl"
         />
 
         <div
-          className="
-      relative
-      flex
-      flex-col
-      gap-7
-
-      lg:grid
-      lg:grid-cols-[0.8fr_1.5fr]
-      lg:gap-12
-      lg:items-center
-    "
+          className="relative flex flex-col gap-7 lg:grid lg:grid-cols-[0.8fr_1.5fr] lg:gap-12 lg:items-center"
         >
 
           {/* LEFT — WEATHER INFORMATION */}
@@ -200,60 +98,25 @@ const Card = ({
             <div>
 
               <div
-                className="
-            inline-flex
-            items-center
-            gap-2
-            text-[10px]
-            sm:text-[11px]
-            font-medium
-            tracking-[0.18em]
-            uppercase
-            text-white/40
-          "
+                className="inline-flex items-center gap-2 text-[10px] sm:text-[11px]"
               >
                 <span
-                  className="
-              h-1.5
-              w-1.5
-              rounded-full
-              bg-emerald-400
-              shadow-[0_0_10px_rgba(52,211,153,0.6)]
-            "
+                  className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.6)]"
                 />
 
                 Current Weather
               </div>
 
 
-              {/* MOBILE / TABLET:
-            Location + temperature on same line
-        */}
+              {/* MOBILE / TABLET:Location + temperature on same line*/}
               <div
-                className="
-            mt-4
-            flex
-            items-center
-            justify-between
-            gap-4
-
-            lg:block
-          "
+                className="mt-4 flex items-center justify-between gap-4 lg:block"
               >
 
                 {/* LOCATION */}
                 <div className="flex items-center gap-3">
                   <h1
-                    className="
-      text-5xl
-      sm:text-6xl
-      lg:text-[64px]
-      leading-none
-      font-light
-      tracking-[-0.045em]
-      text-white
-      truncate
-    "
+                    className="text-5xl sm:text-6xl lg:text-[64px] leading-none font-light tracking-[-0.045em] text-white truncate"
                   >
                     {weather?.city}
                   </h1>
@@ -266,18 +129,12 @@ const Card = ({
                         ? "Remove from favorites"
                         : "Add to favorites"
                     }
-                    className={`
-      shrink-0
-      h-10 w-10
-      rounded-full
-      flex items-center justify-center
-      border
-      transition-all duration-300
-      ${isFavorite
-                        ? "bg-yellow-400/10 border-yellow-300/20 text-yellow-300"
+                    className={`shrink-0 h-10 w-10 rounded-full flex items-center justify-center border transition-all duration-300
+                      ${isFavorite
+                        ? "bg-yellow-400/10 border-yellow-300/20 text-yellow-300 hidden"
                         : "bg-white/[0.04] border-white/[0.08] text-white/30 hover:text-yellow-300 hover:bg-yellow-300/10"
                       }
-    `}
+                    `}
                   >
                     <span className="text-xl">
                       {isFavorite ? "★" : "☆"}
@@ -288,25 +145,11 @@ const Card = ({
 
                 {/* MOBILE / TABLET TEMPERATURE */}
                 <div
-                  className="
-              shrink-0
-              flex
-              items-start
-              gap-2
-
-              lg:hidden
-            "
+                  className="shrink-0 flex items-start gap-2 lg:hidden"
                 >
 
                   <span
-                    className="
-                text-5xl
-                sm:text-6xl
-                leading-[0.8]
-                font-extralight
-                tracking-[-0.07em]
-                text-white
-              "
+                    className="text-5xl sm:text-6xl leading-[0.8] font-extralight tracking-[-0.07em] text-white"
                   >
                     {Math.round(weather.temperature)}
                   </span>
@@ -325,22 +168,7 @@ const Card = ({
                             : "imperial"
                         )
                       }
-                      className="
-                  mt-2
-                  whitespace-nowrap
-                  px-2
-                  py-1
-                  rounded-full
-                  border border-white/10
-                  bg-white/[0.04]
-                  text-[9px]
-                  sm:text-[10px]
-                  tracking-wide
-                  text-white/40
-                  hover:bg-white/[0.08]
-                  hover:text-white/70
-                  transition-all
-                "
+                      className="mt-2 whitespace-nowrap px-2 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[9px] sm:text-[10px] tracking-wide text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all"
                     >
                       °{unit === "imperial" ? "C" : "F"}
                     </button>
@@ -354,15 +182,7 @@ const Card = ({
 
               {/* DESCRIPTION */}
               <p
-                className="
-            mt-3
-            text-sm
-            sm:text-lg
-            font-light
-            tracking-wide
-            text-white/40
-            capitalize
-          "
+                className="mt-3 text-sm sm:text-lg font-light tracking-wide text-white/40 capitalize"
               >
                 {weather?.description}
               </p>
@@ -376,13 +196,7 @@ const Card = ({
               <div className="flex items-start">
 
                 <span
-                  className="
-              text-[108px]
-              leading-[0.8]
-              font-extralight
-              tracking-[-0.075em]
-              text-white
-            "
+                  className="text-[108px] leading-[0.8] font-extralight tracking-[-0.075em] text-white"
                 >
                   {Math.round(weather.temperature)}
                 </span>
@@ -401,21 +215,7 @@ const Card = ({
                           : "imperial"
                       )
                     }
-                    className="
-                block
-                mt-4
-                px-2.5
-                py-1
-                rounded-full
-                border border-white/10
-                bg-white/[0.04]
-                text-[11px]
-                tracking-wide
-                text-white/40
-                hover:bg-white/[0.08]
-                hover:text-white/70
-                transition-all
-              "
+                    className="block mt-4 px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[11px] tracking-wide text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all"
                   >
                     Switch to °{unit === "imperial" ? "C" : "F"}
                   </button>
@@ -431,11 +231,7 @@ const Card = ({
 
           {/* WEATHER ANIMATION */}
           <div
-            className="
-        relative
-        w-full
-        lg:translate-y-1
-      "
+            className="relative w-full lg:translate-y-1"
           >
 
             <WeatherAnimation
@@ -444,43 +240,17 @@ const Card = ({
 
             {/* FEELS LIKE */}
             <div
-              className="
-          absolute
-          bottom-3
-          right-3
-          sm:bottom-5
-          sm:right-5
-          px-3
-          py-2.5
-          sm:px-4
-          sm:py-3
-          rounded-xl
-          bg-black/10
-          backdrop-blur-md
-          border border-white/[0.08]
-        "
+              className="absolute bottom-3 right-3 sm:bottom-5 sm:right-5 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl bg-black/10 backdrop-blur-md border border-white/[0.08]"
             >
 
               <p
-                className="
-            text-[9px]
-            sm:text-[10px]
-            uppercase
-            tracking-[0.16em]
-            text-white/35
-          "
+                className="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-white/35"
               >
                 Feels like
               </p>
 
               <p
-                className="
-            mt-0.5
-            text-base
-            sm:text-lg
-            font-medium
-            text-white/85
-          "
+                className="mt-0.5 text-base sm:text-lg font-medium text-white/85"
               >
                 {Math.round(weather?.feelsLike)}°
                 {unit === "imperial" ? "F" : "C"}
@@ -495,31 +265,13 @@ const Card = ({
 
         {/* DIVIDER */}
         <div
-          className="
-      mt-7
-      lg:mt-9
-      h-px
-      w-full
-      bg-gradient-to-r
-      from-white/10
-      via-white/[0.04]
-      to-transparent
-    "
+          className="mt-7 lg:mt-9 h-px w-full bg-gradient-to-r from-white/10 via-white/[0.04] to-transparent"
         />
 
 
         {/* CONTEXT */}
         <div
-          className="
-      mt-3
-      flex
-      items-center
-      justify-between
-      text-[10px]
-      sm:text-xs
-      tracking-wide
-      text-white/30
-    "
+          className="mt-3 flex items-center justify-between text-[10px] sm:text-xs tracking-wide text-white/30"
         >
           <span>Today</span>
           <span>Live conditions</span>
@@ -613,12 +365,16 @@ const Card = ({
 
       </div>
 
+      {airQuality && (
+        <div className="mt-6 lg:mt-8">
+          <AirQuality airQuality={airQuality} />
+        </div>
+      )}
 
       {/* SUNRISE / SUNSET */}
       <div className="mt-8 sm:mt-10">
         <SunriseSunsetCard weather={weather} />
       </div>
-
     </div>
   );
 };

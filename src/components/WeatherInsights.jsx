@@ -46,18 +46,41 @@ const WeatherInsights = ({ insights }) => {
         {insights.map((insight, index) => (
           <div
             key={`${insight.title}-${index}`}
-            className="
+            className={`
               flex
               gap-3
               p-4
               rounded-2xl
-              bg-white/[0.045]
-              border border-white/[0.07]
-              hover:bg-white/[0.08]
+              border
               transition-all duration-300
-            "
+
+              ${insight.type === "warning"
+                ? "bg-red-400/[0.06] border-red-300/[0.12] hover:bg-red-400/[0.10]"
+                : insight.type === "success"
+                  ? "bg-emerald-400/[0.06] border-emerald-300/[0.12] hover:bg-emerald-400/[0.10]"
+                  : "bg-white/[0.045] border-white/[0.07] hover:bg-white/[0.08]"
+              }
+            `}
           >
-            <div className="text-2xl shrink-0">
+            <div
+              className={`
+                h-10
+                w-10
+                shrink-0
+                rounded-xl
+                flex
+                items-center
+                justify-center
+                text-xl
+
+                ${insight.type === "warning"
+                  ? "bg-red-400/[0.10]"
+                  : insight.type === "success"
+                    ? "bg-emerald-400/[0.10]"
+                    : "bg-white/[0.06]"
+                }
+              `}
+            >
               {insight.icon}
             </div>
 
