@@ -1,167 +1,147 @@
 # 🌦️ Weather App
 
-![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white) ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black) ![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?logo=googlechrome&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38BDF8?logo=tailwindcss&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-Enabled-5A0FC8?logo=googlechrome&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-A modern, responsive **Weather Application** built with **React + Vite**, providing real-time weather data, hourly forecasts, and 5-day forecasts with a smooth UI and PWA support.
+A modern, responsive **Progressive Web App (PWA)** for real-time weather information, forecasts, air quality, weather alerts, and weather insights.
 
----
-
-## ✨ Features
-
-- 🔍 Search weather by **city name**
-- 📍 Get weather using **current location (Geolocation)**
-- 🌡️ Toggle between **Celsius & Fahrenheit**
-- ⏱️ **Hourly forecast** (next 24 hours)
-- 📅 **5-day forecast**
-- 💾 **Recent searches** saved in local storage
-- 🚀 **Progressive Web App (PWA)** – installable on mobile & desktop
-- ⚡ Fast & optimized with **Vite**
-- 🎨 Dynamic background based on weather conditions
-- 🧠 Debounced search with request cancellation (**AbortController**)
-- 📱 Fully responsive design
-
----
-
-## 🛠️ Tech Stack
-
-- **React**
-- **Vite**
-- **OpenWeather API**
-- **Tailwind CSS**
-- **React Icons**
-- **PWA (vite-plugin-pwa)**
-
----
-
-## 📸 Screenshots
-
-![Weather App Screenshot](image.png)
+Built with **React, Vite, Tailwind CSS, Recharts, and the OpenWeather API**, with a focus on performance, responsive design, accessibility, and a polished user experience.
 
 ---
 
 ## 🚀 Live Demo
 
-🔗 **Live App:**  
+**Live App:**  
 https://weather-app-7cfd.vercel.app/
 
 ---
 
-## 📦 Installation & Setup
+## ✨ Features
 
-### 1️⃣ Clone the repository
+### 🌤️ Weather
 
-```bash
-git clone https://github.com/prabhatjaidiya/weather-app.git
-cd weather-app
-```
+- 🔍 Search weather by city
+- 📍 Get weather using current location
+- 🌡️ Celsius / Fahrenheit toggle
+- 🌅 Sunrise and sunset information
+- 💨 Wind information
+- 💧 Humidity and atmospheric data
+- 🌡️ Feels-like temperature
+- 🌙 Dynamic day/night experience
+- 🎨 Dynamic weather-based backgrounds
 
-### 2️⃣ Install dependencies
+### 📊 Forecasts & Charts
 
-```bash
-npm install
-```
+- ⏱️ Hourly weather forecast
+- 📅 5-day weather forecast
+- 📈 Interactive temperature chart
+- 🌧️ Rain probability chart
+- 📊 Weather statistics
+- 📱 Responsive charts for desktop and mobile
 
-### 3️⃣ Add environment variables
+### 🌬️ Air Quality
 
-Create a `.env` file in the root directory:
+- Air Quality Index information
+- Pollutant information
+- Weather + air quality insights
 
-```env
-VITE_OWM_API_KEY=your_openweather_api_key
-```
+### 🚨 Weather Alerts
 
-Get your API key from:
-[https://openweathermap.org/api](https://openweathermap.org/api)
+- Weather condition alerts
+- Context-aware alert information
+- Visual alert components
+
+### 🧠 Weather Insights
+
+- Smart weather insights based on forecast data
+- Contextual recommendations
+- Combined weather and air-quality analysis
+
+### ⭐ Favorites
+
+- Save favorite cities
+- Quickly access saved locations
+- Persistent favorites using LocalStorage
+
+### 🕘 Recent Searches
+
+- Automatically save recent searches
+- Quickly search previously viewed cities
+- Persistent search history using LocalStorage
+
+### 📲 Progressive Web App
+
+- Installable on supported mobile and desktop browsers
+- Offline application shell
+- Service worker
+- Automatic PWA updates
+- Web App Manifest
+- Standalone display mode
 
 ---
 
-### 4️⃣ Run the development server
+## ⚡ Performance
 
-```bash
-npm run dev
-```
+The application is optimized for production with:
 
-App will be available at:
+- ⚡ Vite production builds
+- 💤 Lazy-loaded chart components
+- 📦 Code splitting
+- 🦥 Suspense-based loading states
+- 💾 LocalStorage persistence
+- 🚫 Request cancellation using `AbortController`
+- 🔄 Preventing unnecessary API requests
+- 📐 Responsive chart sizing using `ResizeObserver`
+- 🦴 Skeleton loading states
+- 🧹 ESLint code-quality checks
+
+The application was also tested using production builds and Lighthouse.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- React
+- JavaScript (ES6+)
+- Vite
+- Tailwind CSS
+
+### Libraries
+
+- React Icons
+- Recharts
+
+### APIs
+
+- OpenWeather API
+
+### PWA
+
+- vite-plugin-pwa
+- Service Worker
+- Web App Manifest
+
+### Development Tools
+
+- ESLint
+- Git
+- GitHub
+- Vercel
+
+---
+
+## 📸 Screenshots
+
+Add your latest production screenshots here.
 
 ```text
-http://localhost:5173
-```
-
----
-
-## 🏗️ Build for Production
-
-```bash
-npm run build
-```
-
-Preview the production build:
-
-```bash
-npm run preview
-```
-
----
-
-## 📲 PWA Support
-
-- Installable Progressive Web App (PWA)
-- Supports mobile & desktop installation
-- Internet connection required for fetching weather data
-
----
-
-## 🧠 Project Highlights
-
-* Debounced search to reduce API calls
-* AbortController to prevent race conditions
-* Skeleton loaders for smooth UX
-* Error handling for invalid cities & denied location access
-* LocalStorage for recent searches & last city
-
----
-
-## 📂 Project Structure
-
-```bash
-src/
-│── components/
-│   ├── Navbar.jsx
-│   ├── Card.jsx
-│   ├── HourlyRow.jsx
-│   ├── FiveDayForcast.jsx
-│   ├── WeatherSkeleton.jsx
-│   ├── ForecastSkeleton.jsx
-│   └── SunriseSunsetCard.jsx
-│
-│── Utils.js
-│── App.jsx
-│── main.jsx
-```
-
----
-
-## ⚠️ Known Limitations
-
-* Free OpenWeather API has request limits
-* Wind gust data may be unavailable for some locations
-
----
-
-## 🧑‍💻 Author
-
-**Prabhat Jaidiya**
-Frontend Developer
-
-* GitHub: [https://github.com/prabhatjaidiya](https://github.com/prabhatjaidiya)
-
----
-
-## ⭐ Support
-
-If you like this project, please consider giving it a ⭐ on GitHub — it really helps!
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
+screenshots/
+├── desktop.png
+├── mobile.png
+├── forecast.png
+└── charts.png
