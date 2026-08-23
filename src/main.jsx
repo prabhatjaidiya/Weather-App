@@ -18,11 +18,6 @@ if (
             const registration =
                 await navigator.serviceWorker.register("/sw.js");
 
-            console.log(
-                "Service Worker registered:",
-                registration.scope
-            );
-
             registration.addEventListener(
                 "updatefound",
                 () => {
@@ -38,9 +33,6 @@ if (
                                 newWorker.state === "installed" &&
                                 navigator.serviceWorker.controller
                             ) {
-                                console.log(
-                                    "New Weather App version available."
-                                );
 
                                 newWorker.postMessage({
                                     type: "SKIP_WAITING",

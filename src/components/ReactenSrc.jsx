@@ -5,17 +5,51 @@ const ReactenSrc = ({
   recentSearch,
   setCity,
   fetchWeather,
+  dayNight,
 }) => {
   if (!recentSearch?.length) return null;
+
+  const isNight = dayNight === "night";
 
   const handleSelect = (city) => {
     setCity(city);
     fetchWeather(city);
   };
 
+  const dropdownBg = isNight
+    ? "bg-[#101c2e]/95"
+    : "bg-white/[0.94]";
+
+  const borderColor = isNight
+    ? "border-white/[0.10]"
+    : "border-slate-900/[0.10]";
+
+  const headingText = isNight
+    ? "text-white/35"
+    : "text-slate-900/45";
+
+  const itemText = isNight
+    ? "text-white/55"
+    : "text-slate-900/60";
+
+  const itemHover = isNight
+    ? "hover:text-white hover:bg-white/[0.07]"
+    : "hover:text-slate-900 hover:bg-slate-900/[0.06]";
+
+  const iconBg = isNight
+    ? "bg-white/[0.05] border-white/[0.06]"
+    : "bg-slate-900/[0.04] border-slate-900/[0.07]";
+
+  const iconText = isNight
+    ? "text-white/30 group-hover:text-white/70"
+    : "text-slate-900/35 group-hover:text-slate-900/70";
+
   return (
     <div
-      className="
+      id="recent-searches"
+      role="listbox"
+      aria-label="Recent searches"
+      className={`
         absolute
         left-0
         right-0
@@ -23,33 +57,39 @@ const ReactenSrc = ({
         z-[200]
         p-2
         rounded-2xl
-        bg-[#101c2e]/95
         backdrop-blur-2xl
-        border border-white/[0.10]
+        border
         shadow-[0_20px_60px_rgba(0,0,0,0.35)]
         animate-[fadeIn_0.2s_ease]
-      "
+
+        ${dropdownBg}
+        ${borderColor}
+      `}
     >
+      {/* Header */}
       <div className="px-3 py-2">
         <p
-          className="
+          className={`
             text-[10px]
             uppercase
             tracking-[0.15em]
-            text-white/30
-          "
+            ${headingText}
+          `}
         >
           Recent searches
         </p>
       </div>
 
+      {/* Searches */}
       <div className="space-y-1">
-        {recentSearch.map((city) => (
+        {recentSearch.map((city, index) => (
           <button
-            key={city}
+            key={`${city}-${index}`}
             type="button"
+            role="option"
+            aria-label={`Search weather for ${city}`}
             onClick={() => handleSelect(city)}
-            className="
+            className={`
               group
               w-full
               flex
@@ -60,28 +100,35 @@ const ReactenSrc = ({
               rounded-xl
               text-left
               text-sm
-              text-white/55
-              hover:text-white
-              hover:bg-white/[0.07]
-              transition-all duration-200
-            "
+              transition-all
+              duration-200
+
+              ${itemText}
+              ${itemHover}
+            `}
           >
+            {/* Icon */}
             <span
-              className="
-                h-8 w-8
+              className={`
+                h-8
+                w-8
                 shrink-0
                 rounded-lg
-                bg-white/[0.05]
-                border border-white/[0.06]
-                flex items-center justify-center
-                text-white/30
-                group-hover:text-white/70
+                border
+                flex
+                items-center
+                justify-center
                 transition-colors
-              "
+
+                ${iconBg}
+                ${iconText}
+              `}
+              aria-hidden="true"
             >
               <IoTimeOutline size={16} />
             </span>
 
+            {/* City */}
             <span className="truncate">
               {city}
             </span>
@@ -92,4 +139,4 @@ const ReactenSrc = ({
   );
 };
 
-export default ReactenSrc;
+export default React.memo(ReactenSrc);

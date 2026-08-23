@@ -1,6 +1,6 @@
 export const getBgGradient = (iconCode) => {
   if (!iconCode) {
-    return "linear-gradient(160deg, #07111F 0%, #172B4D 100%)";
+    return "linear-gradient(160deg, #1E3A5F 0%, #4A6FA5 100%)";
   }
 
   const isNight = iconCode.endsWith("n");

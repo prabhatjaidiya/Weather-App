@@ -13,6 +13,7 @@ import AirQuality from "./AirQuality";
 import { formatTemperature, formatWindSpeed, formatVisibility } from "../utils/unitUtils";
 
 const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, isFavorite, retryWeather, airQuality, dayNight }) => {
+
   if (!loading && !weather && !error) {
     return (
       <div
@@ -23,11 +24,11 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
         </div>
 
         <div>
-          <h2 className="text-xl sm:text-2xl font-semibold">
+          <h2 className={`text-2xl font-semibold`}>
             Search for a city
           </h2>
 
-          <p className="mt-2 text-sm sm:text-base text-white/40">
+          <p className={`mt-2 text-sm sm:text-base`}>
             Get real-time weather information and forecasts
           </p>
         </div>

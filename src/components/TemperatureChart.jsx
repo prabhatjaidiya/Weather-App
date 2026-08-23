@@ -7,8 +7,6 @@ const TemperatureChart = ({ hourly, unit, dayNight }) => {
   const isNight = dayNight === "night";
   const [chartRef, chartWidth] = useElementWidth();
 
-  console.log("TemperatureChart chartWidth:", chartWidth);
-
   const data = useMemo(() => {
     if (!hourly?.length) return [];
 

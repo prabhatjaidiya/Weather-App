@@ -15,7 +15,6 @@ const Navbar = ({
     dayNight,
 }) => {
     const [searchFocused, setSearchFocused] = useState(false);
-    const [activeSuggestion, setActiveSuggestion] = useState(-1);
     const isNight = dayNight === "night";
     
 
@@ -48,7 +47,7 @@ const Navbar = ({
                             disabled={loading}
                             aria-label="Search weather"
                             className={`h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-xl flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200
-                            ${isNight ? "text-white hover:bg-white/[0.08] " : "text-slate-900 hover:bg-slate-900/[0.08]"}`}
+                            ${!isNight ? "text-slate-900 hover:bg-slate-900/[0.08] " : "text-white hover:bg-white/[0.08]"}`}
                         >
                             {loading ? (
                                 <span
@@ -81,7 +80,7 @@ const Navbar = ({
                                 type="text"
                                 placeholder="Search city..."
                                 autoComplete="off"
-                                className={`w-full bg-transparent text-sm sm:text-base ${isNight ? "text-white" : "text-slate-900"} placeholder:text-white/30 focus:outline-none`}
+                                className={`w-full bg-transparent text-sm sm:text-base ${!isNight ? "text-slate-900 " : "text-white "} focus:outline-none`}
                             />
                         </label>
 
@@ -91,6 +90,7 @@ const Navbar = ({
                                 recentSearch={recentSearch}
                                 setCity={setCity}
                                 fetchWeather={fetchWeather}
+                                dayNight={dayNight}
                             />
                         )}
                     </div>
@@ -101,6 +101,7 @@ const Navbar = ({
                     <Location
                         handleGeolocate={handleGeolocate}
                         loading={loading}
+                        dayNight={dayNight}
                     />
                 </div>
             </div>

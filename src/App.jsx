@@ -34,11 +34,12 @@ const RainProbabilityChart = lazy(
 
 const App = () => {
   const { weather, loading, error, forecast, hourly, unit, setUnit, fetchWeather, handleGeolocate, airQuality } = useWeather();
-  const { showInstall, isStandalone, isIOS, isInStandaloneIOS, handleInstall } = usePWA();
-  const [city, setCity] = useState("");
-  const [lastSearchType, setLastSearchType] = useState("city");
   const { recentSearch, saveRecentSearch } = useRecentSearch();
   const [lastCity, setLastCity] = useLocalStorage("lastCity", "");
+
+  const [city, setCity] = useState(() => lastCity || "");
+  const [lastSearchType, setLastSearchType] = useState("city");
+  const { showInstall, isStandalone, isIOS, isInStandaloneIOS, handleInstall } = usePWA();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
   const dayNight = getDayNightState(weather);
   const insights = useMemo(
@@ -52,12 +53,10 @@ const App = () => {
   );
 
   useEffect(() => {
-    if (lastCity) {
-      setCity(lastCity);
-      setLastSearchType("city");
-      fetchWeather(lastCity);
-    }
-  }, []);
+    if (!lastCity) return;
+
+    fetchWeather(lastCity);
+  }, [lastCity, fetchWeather]);
 
   const handleCitySearch = useCallback(async (cityName) => {
     if (!cityName?.trim()) return false;
@@ -94,7 +93,7 @@ const App = () => {
     if (weather?.city) {
       toggleFavorite(weather.city);
     }
-  }, [weather?.city, toggleFavorite]);
+  }, [weather, toggleFavorite]);
 
   const handleRetry = useCallback(() => {
     if (lastSearchType === "location") {

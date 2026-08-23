@@ -6,11 +6,6 @@ const SunriseSunsetCard = ({ weather }) => {
       (timestamp + weather.timezone) * 1000
     );
   };
-  const getCurrentCityTime = () => {
-    return new Date(
-      Date.now() + weather.timezone * 1000
-    );
-  };
 
   const sunriseDate = getLocalDate(weather.sunrise);
 
@@ -46,7 +41,7 @@ const SunriseSunsetCard = ({ weather }) => {
   const DAY_DUR = SS - SR;
   const NIGHT_DUR = 1440 - DAY_DUR;
 
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -55,6 +50,12 @@ const SunriseSunsetCard = ({ weather }) => {
 
     return () => clearInterval(id);
   }, []);
+
+  const getCurrentCityTime = () => {
+    return new Date(
+      now.getTime() + weather.timezone * 1000
+    );
+  };
 
   const cityNow = getCurrentCityTime();
 

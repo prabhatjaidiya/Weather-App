@@ -8,38 +8,37 @@ const usePWA = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showInstall, setShowInstall] = useState(false);
 
-    const [isStandalone, setIsStandalone] = useState(false);
-    const [isIOS, setIsIOS] = useState(false);
-    const [isInStandaloneIOS, setIsInStandaloneIOS] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(() =>
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true
+    );
+
+    const [isIOS] = useState(() =>
+        /iphone|ipad|ipod/i.test(window.navigator.userAgent)
+    );
+
+    const [isInStandaloneIOS] = useState(() =>
+        /iphone|ipad|ipod/i.test(window.navigator.userAgent) &&
+        window.navigator.standalone === true
+    );
 
     useEffect(() => {
-        // -----------------------------
-        // Detect standalone mode
-        // -----------------------------
-        const standalone =
-            window.matchMedia("(display-mode: standalone)").matches ||
-            window.navigator.standalone === true;
-
-        setIsStandalone(standalone);
-
-        // -----------------------------
-        // Detect iOS
-        // -----------------------------
-        const ios =
-            /iphone|ipad|ipod/i.test(
-                window.navigator.userAgent
-            );
-
-        setIsIOS(ios);
-
-        // iOS standalone mode
-        setIsInStandaloneIOS(
-            ios && window.navigator.standalone === true
+        const mediaQuery = window.matchMedia(
+            "(display-mode: standalone)"
         );
 
-        // -----------------------------
-        // Android / Chromium install
-        // -----------------------------
+        const handleDisplayModeChange = (event) => {
+            setIsStandalone(
+                event.matches ||
+                window.navigator.standalone === true
+            );
+        };
+
+        mediaQuery.addEventListener(
+            "change",
+            handleDisplayModeChange
+        );
+
         const handleBeforeInstallPrompt = (event) => {
             event.preventDefault();
 
@@ -52,14 +51,10 @@ const usePWA = () => {
             handleBeforeInstallPrompt
         );
 
-        // -----------------------------
-        // App installed
-        // -----------------------------
         const handleAppInstalled = () => {
             setDeferredPrompt(null);
             setShowInstall(false);
-
-            console.log("PWA installed");
+            setIsStandalone(true);
         };
 
         window.addEventListener(
@@ -68,6 +63,11 @@ const usePWA = () => {
         );
 
         return () => {
+            mediaQuery.removeEventListener(
+                "change",
+                handleDisplayModeChange
+            );
+
             window.removeEventListener(
                 "beforeinstallprompt",
                 handleBeforeInstallPrompt
@@ -80,21 +80,13 @@ const usePWA = () => {
         };
     }, []);
 
-    // -----------------------------
-    // Install app
-    // -----------------------------
     const handleInstall = useCallback(async () => {
         if (!deferredPrompt) return;
 
         try {
             deferredPrompt.prompt();
 
-            const { outcome } =
-                await deferredPrompt.userChoice;
-
-            console.log(
-                `PWA install result: ${outcome}`
-            );
+            await deferredPrompt.userChoice;
         } catch (error) {
             console.error(
                 "PWA install failed:",
