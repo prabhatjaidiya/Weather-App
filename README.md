@@ -145,6 +145,10 @@ The application was also tested using production builds and Lighthouse.
 
 ![Weather App Mobile](./screenshots/mobile.png)
 
-### Weather Charts
+### Forecast
 
-![Weather Charts](./screenshots/charts.png)
+![Weather App Forecast](./screenshots/forecast.png)
+
+### Charts
+
+![Weather App Charts](./screenshots/charts.png)
