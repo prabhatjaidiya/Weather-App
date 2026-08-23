@@ -137,11 +137,14 @@ The application was also tested using production builds and Lighthouse.
 
 ## 📸 Screenshots
 
-Add your latest production screenshots here.
+### Desktop
 
-```text
-screenshots/
-├── desktop.png
-├── mobile.png
-├── forecast.png
-└── charts.png
+![Weather App Desktop](./screenshots/desktop.png)
+
+### Mobile
+
+![Weather App Mobile](./screenshots/mobile.png)
+
+### Weather Charts
+
+![Weather Charts](./screenshots/charts.png)
