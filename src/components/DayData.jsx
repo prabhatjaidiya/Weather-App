@@ -7,32 +7,17 @@ const DayData = ({
   description,
   high,
   low,
-  rainProbability,
   windSpeed,
   unit,
+  dayNight
 }) => {
   return (
     <div
-      className="
-        group
-        mt-3
-        w-full
-        px-4 py-4
-        rounded-2xl
-        flex items-center
-        justify-between
-        gap-3
-        bg-white/[0.045]
-        border border-white/[0.07]
-        hover:bg-white/[0.08]
-        hover:border-white/[0.12]
-        hover:-translate-y-0.5
-        transition-all duration-300
-      "
+      className="group mt-3 w-full px-4 py-4 rounded-2xl flex items-center justify-between gap-3 bg-white/[0.045] border border-white/[0.07] hover:bg-white/[0.08] hover:border-white/[0.12] hover:-translate-y-0.5 transition-all duration-300"
     >
       {/* Day */}
       <div className="w-12 shrink-0">
-        <span className="text-sm sm:text-base font-semibold text-white/80">
+        <span className={`text-sm sm:text-base font-semibold ` + (dayNight === "night" ? "text-white/80" : "text-slate-900/80")}>
           {day}
         </span>
       </div>
@@ -44,40 +29,28 @@ const DayData = ({
         </span>
 
         <span
-          className="
+          className={`
           hidden
           md:block
           text-xs
-         text-white/35
-          capitalize
+          ` + (dayNight === "night" ? "text-white/35" : "text-slate-900/35") +
+            `capitalize
           truncate
           max-w-[140px]
-          "
-        >
+          `}>
           {description}
         </span>
       </div>
 
-      {/* Rain */}
-      <div className="flex items-center gap-1 min-w-[55px]">
-        <span className="text-blue-300 text-sm">
-          💧
-        </span>
-
-        <span className="text-sm text-blue-300">
-          {rainProbability}%
-        </span>
-      </div>
-
       {/* Wind */}
-      <div className="
+      <div className={`
         hidden
         sm:flex
         items-center
         gap-1
         min-w-[75px]
-        text-white/40
-      ">
+        ` + (dayNight === "night" ? "text-white/40" : "text-slate-900/40")}
+      >
         <span className="text-xs">
           💨
         </span>
@@ -89,12 +62,12 @@ const DayData = ({
 
       {/* Temperature */}
       <div className="flex items-center gap-3 shrink-0">
-        <span className="text-sm sm:text-base font-semibold text-white">
+        <span className={`text-sm sm:text-base font-semibold ` + (dayNight === "night" ? "text-white" : "text-slate-900")}>
           {high}°
           {unit === "imperial" ? "F" : "C"}
         </span>
 
-        <span className="text-sm sm:text-base text-white/40">
+        <span className={`text-sm sm:text-base ` + (dayNight === "night" ? "text-white/40" : "text-slate-900/40")}>
           {low}°
           {unit === "imperial" ? "F" : "C"}
         </span>

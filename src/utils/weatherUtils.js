@@ -15,7 +15,7 @@ export const normalizeWeather = (weather) => {
 
         windSpeed: weather.wind?.speed ?? 0,
         windDirection: weather.wind?.deg,
-        windGust: weather.wind?.gust ?? 0,
+        windGust: weather.wind?.gust ?? null,
 
         condition: weather.weather?.[0]?.main,
         description: weather.weather?.[0]?.description,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback } from "react";
 import useLocalStorage from "./useLocalStorage";
 
 const useRecentSearch = () => {
@@ -7,10 +7,11 @@ const useRecentSearch = () => {
         []
     );
 
-    const saveRecentSearch = (cityName) => {
+    const saveRecentSearch = useCallback((cityName) => {
         if (!cityName?.trim()) return;
 
-        const normalized = cityName.trim().toLowerCase();
+        const trimmedCity = cityName.trim();
+        const normalized = trimmedCity.toLowerCase();
 
         setRecentSearch((prev) => {
             const safeRecent = Array.isArray(prev)
@@ -20,7 +21,7 @@ const useRecentSearch = () => {
                 : [];
 
             const updated = [
-                cityName.trim(),
+                trimmedCity,
                 ...safeRecent.filter(
                     (city) =>
                         city.toLowerCase() !== normalized
@@ -29,7 +30,7 @@ const useRecentSearch = () => {
 
             return updated.slice(0, 5);
         });
-    };
+    }, [setRecentSearch]);
 
     return {
         recentSearch,

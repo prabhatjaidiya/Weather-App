@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
     getWeatherByCity,
     getWeatherByCoordinates,
@@ -19,79 +19,112 @@ const useWeather = () => {
     const [unit, setUnit] = useState("metric");
     const [forecast, setForecast] = useState([]);
     const [hourly, setHourly] = useState([]);
+    const [lastRequest, setLastRequest] = useState(null);
 
     const controllerRef = useRef(null);
 
-    const fetchAirQuality = async (latitude, longitude, signal) => {
-        try {
-            const data = await getAirQuality(
-                latitude,
-                longitude,
-                signal
-            );
-
-            if (!signal.aborted) {
-                setAirQuality(data);
-            }
-        } catch (err) {
-            if (err.name !== "AbortError") {
-                console.error("Air quality error:", err);
-                setAirQuality(null);
-            }
-        }
-    };
-
-    const fetchWeather = async (cityName) => {
-        if (!cityName.trim()) return;
-
-        controllerRef.current?.abort();
-
-        const controller = new AbortController();
-        controllerRef.current = controller;
-
-        const { signal } = controller;
-
-        try {
-            setLoading(true);
-            setError(null);
-
-            const data = await getWeatherByCity(
-                cityName,
-                unit,
-                signal
-            );
-
-            const forecastData = data.forecast;
-
-            if (!signal.aborted) {
-                const normalizedWeather =
-                    normalizeWeather(data.weather);
-
-                setWeather(normalizedWeather);
-
-                fetchAirQuality(
-                    normalizedWeather.coordinates.latitude,
-                    normalizedWeather.coordinates.longitude,
+    const fetchAirQuality = useCallback(
+        async (latitude, longitude, signal) => {
+            try {
+                const data = await getAirQuality(
+                    latitude,
+                    longitude,
                     signal
                 );
 
-                setHourly(
-                    getHourlyForecast(forecastData.list, data.weather.timezone)
+                if (!signal.aborted) {
+                    setAirQuality(data);
+                }
+            } catch (err) {
+                if (err.name !== "AbortError") {
+                    console.error("Air quality error:", err);
+                    setAirQuality(null);
+                }
+            }
+        },
+        []
+    );
+
+    // Process weather + forecast data in one place
+    const processWeatherData = useCallback(
+        (data, signal) => {
+            if (signal.aborted) return;
+
+            const normalizedWeather =
+                normalizeWeather(data.weather);
+
+            const forecastData = data.forecast;
+
+            setWeather(normalizedWeather);
+
+            setHourly(
+                getHourlyForecast(
+                    forecastData.list,
+                    data.weather.timezone
+                )
+            );
+
+            setForecast(
+                getDailyForecast(
+                    forecastData.list,
+                    data.weather.timezone
+                )
+            );
+
+            fetchAirQuality(
+                normalizedWeather.coordinates.latitude,
+                normalizedWeather.coordinates.longitude,
+                signal
+            );
+        },
+        [fetchAirQuality]
+    );
+
+    const fetchWeather = useCallback(
+        async (cityName) => {
+            if (!cityName?.trim()) return false;
+
+            const searchedCity = cityName.trim();
+
+            setLastRequest({
+                type: "city",
+                city: searchedCity,
+            });
+
+            controllerRef.current?.abort();
+
+            const controller = new AbortController();
+            controllerRef.current = controller;
+
+            const { signal } = controller;
+
+            try {
+                setLoading(true);
+                setError(null);
+
+                const data = await getWeatherByCity(
+                    searchedCity,
+                    signal
                 );
 
-                setForecast(
-                    getDailyForecast(forecastData.list, data.weather.timezone)
-                );
+                processWeatherData(data, signal);
+
+                if (signal.aborted) {
+                    return false;
+                }
 
                 return true;
-            }
 
-        } catch (err) {
-            if (err.name !== "AbortError") {
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    return false;
+                }
+
                 const errorCode =
                     err instanceof TypeError
                         ? "NETWORK_ERROR"
                         : err.message;
+
                 const errorInfo =
                     getWeatherErrorMessage(errorCode);
 
@@ -103,24 +136,83 @@ const useWeather = () => {
                 setHourly([]);
 
                 return false;
-            }
 
-        } finally {
-            if (!signal.aborted) {
-                setLoading(false);
+            } finally {
+                if (!signal.aborted) {
+                    setLoading(false);
+                }
             }
-        }
-    };
+        },
+        [processWeatherData]
+    );
 
-    const handleGeolocate = () => {
+    const fetchWeatherByCoordinates = useCallback(
+        async (latitude, longitude, signal) => {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const data =
+                    await getWeatherByCoordinates(
+                        latitude,
+                        longitude,
+                        signal
+                    );
+
+                processWeatherData(data, signal);
+
+                if (signal.aborted) {
+                    return false;
+                }
+
+                return data.weather.name;
+
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    return false;
+                }
+
+                const errorCode =
+                    err instanceof TypeError
+                        ? "NETWORK_ERROR"
+                        : err.message;
+
+                const errorInfo =
+                    getWeatherErrorMessage(errorCode);
+
+                setError(errorInfo);
+
+                setWeather(null);
+                setAirQuality(null);
+                setForecast([]);
+                setHourly([]);
+
+                return false;
+
+            } finally {
+                if (!signal.aborted) {
+                    setLoading(false);
+                }
+            }
+        },
+        [processWeatherData]
+    );
+
+    const handleGeolocate = useCallback(() => {
         controllerRef.current?.abort();
 
-        controllerRef.current = new AbortController();
+        const controller = new AbortController();
+        controllerRef.current = controller;
 
-        const { signal } = controllerRef.current;
+        const { signal } = controller;
 
         if (!navigator.geolocation) {
-            setError("Geolocation isn't supported by your browser.");
+            setError({
+                title: "Location unavailable",
+                message:
+                    "Geolocation isn't supported by your browser. Search for a city manually.",
+            });
+
             return;
         }
 
@@ -129,62 +221,36 @@ const useWeather = () => {
 
         navigator.geolocation.getCurrentPosition(
             async (pos) => {
-                const { latitude, longitude } = pos.coords;
+                const {
+                    latitude,
+                    longitude,
+                } = pos.coords;
 
-                try {
-                    const data = await getWeatherByCoordinates(
-                        latitude,
-                        longitude,
-                        unit,
-                        signal
-                    );
+                if (signal.aborted) return;
 
-                    if (signal.aborted) return;
+                setLastRequest({
+                    type: "coordinates",
+                    latitude,
+                    longitude,
+                });
 
-                    const normalizedWeather =
-                        normalizeWeather(data.weather);
-
-                    setWeather(normalizedWeather);
-
-                    fetchAirQuality(
-                        normalizedWeather.coordinates.latitude,
-                        normalizedWeather.coordinates.longitude,
-                        signal
-                    );
-
-                    return data.weather.name;
-
-                } catch (err) {
-                    if (err.name !== "AbortError") {
-                        const errorCode =
-                            err instanceof TypeError
-                                ? "NETWORK_ERROR"
-                                : err.message;
-
-                        const errorInfo =
-                            getWeatherErrorMessage(errorCode);
-
-                        setError(errorInfo);
-
-                        setWeather(null);
-                        setAirQuality(null);
-                        setForecast([]);
-                        setHourly([]);
-                    }
-                } finally {
-                    if (!signal.aborted) {
-                        setLoading(false);
-                    }
-                }
+                await fetchWeatherByCoordinates(
+                    latitude,
+                    longitude,
+                    signal
+                );
             },
 
             (error) => {
+                if (signal.aborted) return;
+
                 let errorInfo;
 
                 switch (error.code) {
                     case 1:
                         errorInfo = {
-                            title: "Location permission denied",
+                            title:
+                                "Location permission denied",
                             message:
                                 "Allow location access in your browser settings or search for a city manually.",
                         };
@@ -192,7 +258,8 @@ const useWeather = () => {
 
                     case 2:
                         errorInfo = {
-                            title: "Location unavailable",
+                            title:
+                                "Location unavailable",
                             message:
                                 "We couldn't determine your current location. Please try again or search for a city manually.",
                         };
@@ -200,7 +267,8 @@ const useWeather = () => {
 
                     case 3:
                         errorInfo = {
-                            title: "Location request timed out",
+                            title:
+                                "Location request timed out",
                             message:
                                 "Getting your location took too long. Please try again.",
                         };
@@ -208,7 +276,8 @@ const useWeather = () => {
 
                     default:
                         errorInfo = {
-                            title: "Unable to get your location",
+                            title:
+                                "Unable to get your location",
                             message:
                                 "Please try again or search for a city manually.",
                         };
@@ -218,7 +287,7 @@ const useWeather = () => {
                 setLoading(false);
             }
         );
-    };
+    }, [fetchWeatherByCoordinates]);
 
     return {
         weather,
@@ -230,7 +299,9 @@ const useWeather = () => {
         unit,
         setUnit,
         fetchWeather,
+        fetchWeatherByCoordinates,
         handleGeolocate,
+        lastRequest,
     };
 };
 

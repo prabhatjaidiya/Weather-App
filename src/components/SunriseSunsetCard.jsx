@@ -413,4 +413,4 @@ const SunriseSunsetCard = ({ weather }) => {
   );
 };
 
-export default SunriseSunsetCard;
+export default React.memo(SunriseSunsetCard);

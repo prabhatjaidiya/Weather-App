@@ -1,83 +1,110 @@
-import { useEffect, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
 
 const usePWA = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showInstall, setShowInstall] = useState(false);
+
     const [isStandalone, setIsStandalone] = useState(false);
-
-    const isIOS = /iphone|ipad|ipod/i.test(
-        window.navigator.userAgent
-    );
-
-    const isInStandaloneIOS =
-        window.navigator.standalone === true;
+    const [isIOS, setIsIOS] = useState(false);
+    const [isInStandaloneIOS, setIsInStandaloneIOS] = useState(false);
 
     useEffect(() => {
-        setIsStandalone(
+        // -----------------------------
+        // Detect standalone mode
+        // -----------------------------
+        const standalone =
             window.matchMedia("(display-mode: standalone)").matches ||
-            window.navigator.standalone === true
+            window.navigator.standalone === true;
+
+        setIsStandalone(standalone);
+
+        // -----------------------------
+        // Detect iOS
+        // -----------------------------
+        const ios =
+            /iphone|ipad|ipod/i.test(
+                window.navigator.userAgent
+            );
+
+        setIsIOS(ios);
+
+        // iOS standalone mode
+        setIsInStandaloneIOS(
+            ios && window.navigator.standalone === true
         );
-    }, []);
 
-    useEffect(() => {
-        const handler = (e) => {
-            e.preventDefault();
+        // -----------------------------
+        // Android / Chromium install
+        // -----------------------------
+        const handleBeforeInstallPrompt = (event) => {
+            event.preventDefault();
 
-            setDeferredPrompt(e);
+            setDeferredPrompt(event);
             setShowInstall(true);
         };
 
         window.addEventListener(
             "beforeinstallprompt",
-            handler
+            handleBeforeInstallPrompt
+        );
+
+        // -----------------------------
+        // App installed
+        // -----------------------------
+        const handleAppInstalled = () => {
+            setDeferredPrompt(null);
+            setShowInstall(false);
+
+            console.log("PWA installed");
+        };
+
+        window.addEventListener(
+            "appinstalled",
+            handleAppInstalled
         );
 
         return () => {
             window.removeEventListener(
                 "beforeinstallprompt",
-                handler
+                handleBeforeInstallPrompt
             );
-        };
-    }, []);
 
-    useEffect(() => {
-        const onInstalled = () => {
-            setShowInstall(false);
-            setDeferredPrompt(null);
-
-            console.log("App installed");
-        };
-
-        window.addEventListener(
-            "appinstalled",
-            onInstalled
-        );
-
-        return () => {
             window.removeEventListener(
                 "appinstalled",
-                onInstalled
+                handleAppInstalled
             );
         };
     }, []);
 
-    const handleInstall = async () => {
+    // -----------------------------
+    // Install app
+    // -----------------------------
+    const handleInstall = useCallback(async () => {
         if (!deferredPrompt) return;
 
-        deferredPrompt.prompt();
+        try {
+            deferredPrompt.prompt();
 
-        const { outcome } =
-            await deferredPrompt.userChoice;
+            const { outcome } =
+                await deferredPrompt.userChoice;
 
-        if (outcome === "accepted") {
-            console.log("PWA installed");
-        } else {
-            console.log("User dismissed install");
+            console.log(
+                `PWA install result: ${outcome}`
+            );
+        } catch (error) {
+            console.error(
+                "PWA install failed:",
+                error
+            );
+        } finally {
+            setDeferredPrompt(null);
+            setShowInstall(false);
         }
-
-        setDeferredPrompt(null);
-        setShowInstall(false);
-    };
+    }, [deferredPrompt]);
 
     return {
         showInstall,

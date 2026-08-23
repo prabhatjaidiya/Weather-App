@@ -1,37 +1,66 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
+  build: {
+    sourcemap: true,
+  },
+
   plugins: [
     react(),
+
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: "autoUpdate",
+
       devOptions: {
         enabled: false,
       },
-      includeAssets: ['favicon.svg'],
+
+      includeAssets: [
+        "favicon.svg",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
+      ],
+
       manifest: {
-        name: 'Weather App',
-        short_name: 'Weather',
-        description: 'Modern weather forecast app',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
-        display: 'standalone',
-        start_url: '/',
+        id: "/",
+        name: "Weather App",
+        short_name: "Weather",
+        description:
+          "A responsive weather app with real-time weather, forecasts, air quality, weather alerts and smart insights.",
+
+        theme_color: "#020617",
+        background_color: "#020617",
+
+        display: "standalone",
+        orientation: "any",
+        start_url: "/",
+        scope: "/",
+
         icons: [
           {
-            src: '/weather_icon_192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
+            src: "/pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
           },
           {
-            src: '/weather_icon_512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
-        ]
-      }
-    })
-  ]
-})
+            src: "/pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
+        ],
+      },
+    }),
+
+    visualizer({
+      filename: "./dist/stats.html",
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
+});

@@ -1,51 +1,29 @@
 import React from "react";
 
-const Data = ({ icon, data, text }) => {
+const Data = ({ icon, data, text, dayNight }) => {
   return (
     <div
-      className="
-        group
-        min-w-0
-        rounded-2xl
-        p-3.5
-        sm:p-4
-        bg-white/[0.035]
-        border border-white/[0.06]
-        hover:bg-white/[0.06]
-        hover:border-white/[0.10]
-        transition-all
-        duration-300
-      "
+      className="group min-w-0 rounded-2xl p-3.5 sm:p-4 bg-white/[0.035] border border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.10] transition-all duration-300"
     >
 
-      <div className="
-        flex
-        items-center
-        gap-2
-        text-white/35
-        group-hover:text-white/55
-        transition-colors
-      ">
+      <div className={`flex items-center gap-2 ` + (dayNight === "night" ? "text-white/35 group-hover:text-white/55" : "text-slate-900/35 group-hover:text-slate-900/55") + ` transition-colors`}>
         {icon}
 
-        <span className="
+        <span className={`
           text-[10px]
           sm:text-xs
-          text-white/35
-          truncate
-        ">
+          ` + (dayNight === "night" ? "text-white/35 group-hover:text-white/55" : "text-slate-900/35 group-hover:text-slate-900/55") + ` truncate
+        `}>
           {text}
         </span>
       </div>
 
-      <p className="
+      <p className={`
         mt-2
         text-sm
         sm:text-lg
         font-medium
-        text-white/85
-        truncate
-      ">
+        ` + (dayNight === "night" ? "text-white/85" : "text-slate-900/85") + `truncate`}>
         {data}
       </p>
 
@@ -53,4 +31,4 @@ const Data = ({ icon, data, text }) => {
   );
 };
 
-export default Data;
+export default React.memo(Data);

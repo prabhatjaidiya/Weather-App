@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import {
+    useCallback,
+    useEffect,
+    useState,
+} from "react";
 
 const useFavorites = () => {
     const [favorites, setFavorites] = useState(() => {
         try {
-            const saved = localStorage.getItem("favoriteCities");
+            const saved =
+                localStorage.getItem("favoriteCities");
 
             if (!saved) return [];
 
@@ -40,8 +45,11 @@ const useFavorites = () => {
         );
     }, [favorites]);
 
-    const toggleFavorite = (cityName) => {
-        if (!cityName || typeof cityName !== "string") {
+    const toggleFavorite = useCallback((cityName) => {
+        if (
+            !cityName ||
+            typeof cityName !== "string"
+        ) {
             return;
         }
 
@@ -52,29 +60,35 @@ const useFavorites = () => {
 
             const exists = safeFavorites.some(
                 (fav) =>
-                    fav.toLowerCase() === cityName.toLowerCase()
+                    fav.toLowerCase() ===
+                    cityName.toLowerCase()
             );
 
             if (exists) {
                 return safeFavorites.filter(
                     (fav) =>
-                        fav.toLowerCase() !== cityName.toLowerCase()
+                        fav.toLowerCase() !==
+                        cityName.toLowerCase()
                 );
             }
 
             return [...safeFavorites, cityName];
         });
-    };
+    }, []);
 
-    const isFavorite = (cityName) => {
-        if (!cityName) return false;
+    const isFavorite = useCallback(
+        (cityName) => {
+            if (!cityName) return false;
 
-        return favorites.some(
-            (fav) =>
-                typeof fav === "string" &&
-                fav.toLowerCase() === cityName.toLowerCase()
-        );
-    };
+            return favorites.some(
+                (fav) =>
+                    typeof fav === "string" &&
+                    fav.toLowerCase() ===
+                    cityName.toLowerCase()
+            );
+        },
+        [favorites]
+    );
 
     return {
         favorites,

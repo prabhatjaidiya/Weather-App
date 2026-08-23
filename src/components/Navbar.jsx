@@ -12,12 +12,11 @@ const Navbar = ({
     recentSearch,
     loading,
     handleInputChange,
-    suggestions,
-    loadingSuggestions,
-    handleSuggestionSelect,
+    dayNight,
 }) => {
     const [searchFocused, setSearchFocused] = useState(false);
     const [activeSuggestion, setActiveSuggestion] = useState(-1);
+    const isNight = dayNight === "night";
     
 
     const handleSubmit = () => {
@@ -28,15 +27,7 @@ const Navbar = ({
     return (
         <header className="relative z-[100] w-full px-4 sm:px-6 lg:px-8 pt-4 sm:pt-5">
             <div
-                className="
-          w-full
-          max-w-[1440px]
-          mx-auto
-          min-h-[64px]
-          flex
-          items-center
-          gap-3 sm:gap-5
-        "
+                className="w-full max-w-[1440px] mx-auto min-h-[64px] flex items-center gap-3 sm:gap-5"
             >
                 {/* Logo */}
                 <div className="shrink-0">
@@ -45,31 +36,10 @@ const Navbar = ({
 
                 {/* Search */}
                 <div
-                    className="
-    relative
-    z-[100]
-    flex-1
-    max-w-3xl
-    mx-auto
-  "
+                    className="relative z-[100] flex-1 max-w-3xl mx-auto"
                 >
                     <div
-                        className="
-              flex
-              items-center
-              gap-2
-              w-full
-              h-12 sm:h-14
-              px-2
-              rounded-2xl
-              bg-white/[0.07]
-              backdrop-blur-xl
-              border border-white/[0.09]
-              shadow-[0_10px_40px_rgba(0,0,0,0.15)]
-              focus-within:border-white/[0.18]
-              focus-within:bg-white/[0.09]
-              transition-all duration-300
-            "
+                        className="flex items-center gap-2 w-full h-12 sm:h-14 px-2 rounded-2xl bg-white/[0.07] backdrop-blur-xl border border-white/[0.09] shadow-[0_10px_40px_rgba(0,0,0,0.15)] focus-within:border-white/[0.18] focus-within:bg-white/[0.09] transition-all duration-300"
                     >
                         {/* Search button */}
                         <button
@@ -77,30 +47,12 @@ const Navbar = ({
                             onClick={handleSubmit}
                             disabled={loading}
                             aria-label="Search weather"
-                            className="
-                h-9 w-9
-                sm:h-10 sm:w-10
-                shrink-0
-                rounded-xl
-                flex items-center justify-center
-                text-white/50
-                hover:text-white
-                hover:bg-white/[0.08]
-                disabled:opacity-30
-                disabled:cursor-not-allowed
-                transition-all duration-200
-              "
+                            className={`h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-xl flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-200
+                            ${isNight ? "text-white hover:bg-white/[0.08] " : "text-slate-900 hover:bg-slate-900/[0.08]"}`}
                         >
                             {loading ? (
                                 <span
-                                    className="
-                    h-4 w-4
-                    rounded-full
-                    border-2
-                    border-white/20
-                    border-t-white/80
-                    animate-spin
-                  "
+                                    className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white/80 animate-spin"
                                 />
                             ) : (
                                 <IoSearchSharp size={21} />
@@ -129,14 +81,7 @@ const Navbar = ({
                                 type="text"
                                 placeholder="Search city..."
                                 autoComplete="off"
-                                className="
-    w-full
-    bg-transparent
-    text-sm sm:text-base
-    text-white
-    placeholder:text-white/30
-    focus:outline-none
-  "
+                                className={`w-full bg-transparent text-sm sm:text-base ${isNight ? "text-white" : "text-slate-900"} placeholder:text-white/30 focus:outline-none`}
                             />
                         </label>
 
@@ -163,4 +108,4 @@ const Navbar = ({
     );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

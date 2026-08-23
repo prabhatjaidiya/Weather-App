@@ -1,10 +1,13 @@
 {
   "name": "Weather App",
   "short_name": "Weather",
+  "description": "A responsive weather app with forecasts, air quality, weather alerts and insights.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "background_color": "#020617",
+  "theme_color": "#020617",
   "icons": [
     {
       "src": "/pwa-192x192.png",

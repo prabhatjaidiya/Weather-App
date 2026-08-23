@@ -10,12 +10,13 @@ import HourlyRow from "./HourlyRow";
 import SunriseSunsetCard from "./SunriseSunsetCard";
 import WeatherAnimation from "./WeatherAnimation";
 import AirQuality from "./AirQuality";
+import { formatTemperature, formatWindSpeed, formatVisibility } from "../utils/unitUtils";
 
-const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, isFavorite, retryWeather, airQuality }) => {
+const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, isFavorite, retryWeather, airQuality, dayNight }) => {
   if (!loading && !weather && !error) {
     return (
       <div
-        className="w-full min-h-[520px] rounded-[28px] p-6 flex flex-col justify-center items-center gap-5 bg-white/[0.06] backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_80px_rgba(0,0,0,0.25)] text-center"
+        className="w-full min-h-[520px] rounded-2xl p-6 flex flex-col justify-center items-center gap-5 bg-white/[0.045] border border-white/[0.07] transition-all duration-300 shadow-[0_20px_80px_rgba(0,0,0,0.25)] text-center"
       >
         <div className="text-[110px] sm:text-[140px] leading-none">
           🌎
@@ -37,7 +38,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
   if (error) {
     return (
       <div
-        className="w-full min-h-[520px] rounded-[28px] p-6 sm:p-8 flex flex-col justify-center items-center text-center bg-white/[0.06] backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_80px_rgba(0,0,0,0.25)]"
+        className="w-full min-h-[520px] rounded-2xl p-6 sm:p-8 flex flex-col justify-center items-center text-center bg-white/[0.045] border border-white/[0.07] transition-all duration-300 shadow-[0_20px_80px_rgba(0,0,0,0.25)]"
       >
         {/* Icon */}
         <div
@@ -76,7 +77,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
 
   return (
     <div
-      className={`${loading ? "opacity-70 blur-[0.5px]" : ""} w-full rounded-[28px] p-5 sm:p-7 lg:p-8 bg-white/[0.07] backdrop-blur-2xl border border-white/[0.10] shadow-[0_20px_80px_rgba(0,0,0,0.25)] transition-all duration-500`}
+      className={`${loading ? "opacity-70 blur-[0.5px]" : ""} w-full rounded-2xl p-5 sm:p-7 lg:p-8 bg-white/[0.045] border border-white/[0.07] transition-all duration-300 shadow-[0_20px_80px_rgba(0,0,0,0.25)]`}
     >
 
       {/* PREMIUM WEATHER HERO */}
@@ -116,7 +117,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
                 {/* LOCATION */}
                 <div className="flex items-center gap-3">
                   <h1
-                    className="text-5xl sm:text-6xl lg:text-[64px] leading-none font-light tracking-[-0.045em] text-white truncate"
+                    className={`text-5xl sm:text-6xl lg:text-[64px] leading-none font-light tracking-[-0.045em] ${dayNight === "night" ? "text-white" : "text-slate-900"} truncate`}
                   >
                     {weather?.city}
                   </h1>
@@ -131,9 +132,10 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
                     }
                     className={`shrink-0 h-10 w-10 rounded-full flex items-center justify-center border transition-all duration-300
                       ${isFavorite
-                        ? "bg-yellow-400/10 border-yellow-300/20 text-yellow-300 hidden"
-                        : "bg-white/[0.04] border-white/[0.08] text-white/30 hover:text-yellow-300 hover:bg-yellow-300/10"
+                        ? "hidden"
+                        : "bg-white/[0.04] border-white/[0.08] hover:text-yellow-300 hover:bg-yellow-300/10"
                       }
+                      ${dayNight === "night" ? "text-white/30" : "text-slate-900/30"}
                     `}
                   >
                     <span className="text-xl">
@@ -149,14 +151,14 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
                 >
 
                   <span
-                    className="text-5xl sm:text-6xl leading-[0.8] font-extralight tracking-[-0.07em] text-white"
+                    className={`text-5xl sm:text-6xl leading-[0.8] font-extralight tracking-[-0.07em] ${dayNight === "night" ? "text-white" : "text-slate-900"}`}
                   >
-                    {Math.round(weather.temperature)}
+                    {formatTemperature(weather.temperature, unit)}
                   </span>
 
                   <div className="flex flex-col">
 
-                    <span className="text-lg font-light text-white/40">
+                    <span className={`text-lg font-light ${dayNight === "night" ? "text-white/60" : "text-slate-900/60"}`}>
                       °{unit === "imperial" ? "F" : "C"}
                     </span>
 
@@ -168,7 +170,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
                             : "imperial"
                         )
                       }
-                      className="mt-2 whitespace-nowrap px-2 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[9px] sm:text-[10px] tracking-wide text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all"
+                      className={`mt-2 whitespace-nowrap px-2 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[9px] sm:text-[10px] tracking-wide ${dayNight === "night" ? "text-white/40 hover:bg-white/[0.08] hover:text-white/70" : "text-slate-900/40 hover:bg-slate-900/[0.08] hover:text-slate-900/70"} transition-all`}
                     >
                       °{unit === "imperial" ? "C" : "F"}
                     </button>
@@ -182,7 +184,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
 
               {/* DESCRIPTION */}
               <p
-                className="mt-3 text-sm sm:text-lg font-light tracking-wide text-white/40 capitalize"
+                className={`mt-3 text-sm sm:text-lg font-light tracking-wide ${dayNight === "night" ? "text-white/80" : "text-slate-900/80"} capitalize`}
               >
                 {weather?.description}
               </p>
@@ -196,14 +198,14 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
               <div className="flex items-start">
 
                 <span
-                  className="text-[108px] leading-[0.8] font-extralight tracking-[-0.075em] text-white"
+                  className={`text-[108px] leading-[0.8] font-extralight tracking-[-0.075em] ${dayNight === "night" ? "text-white" : "text-slate-900"}`}
                 >
-                  {Math.round(weather.temperature)}
+                  {formatTemperature(weather.temperature, unit)}
                 </span>
 
                 <div className="ml-3 pt-1">
 
-                  <span className="text-2xl font-light text-white/40">
+                  <span className={`text-2xl font-light ${dayNight === "night" ? "text-white/60" : "text-slate-900/60"}`}>
                     °{unit === "imperial" ? "F" : "C"}
                   </span>
 
@@ -215,7 +217,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
                           : "imperial"
                       )
                     }
-                    className="block mt-4 px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[11px] tracking-wide text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all"
+                    className={`block mt-4 px-2.5 py-1 rounded-full border border-white/10 bg-white/[0.04] text-[11px] tracking-wide ${dayNight === "night" ? "text-white/40 hover:bg-white/[0.08] hover:text-white/70" : "text-slate-900/40 hover:bg-slate-900/[0.08] hover:text-slate-900/70"} transition-all`}
                   >
                     Switch to °{unit === "imperial" ? "C" : "F"}
                   </button>
@@ -236,6 +238,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
 
             <WeatherAnimation
               icon={weather?.icon}
+              dayNight={dayNight}
             />
 
             {/* FEELS LIKE */}
@@ -244,15 +247,15 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
             >
 
               <p
-                className="text-[9px] sm:text-[10px] uppercase tracking-[0.16em] text-white/35"
+                className={`text-[9px] sm:text-[10px] uppercase tracking-[0.16em] ${dayNight === "night" ? "text-white/80" : "text-slate-900/80"}`}
               >
                 Feels like
               </p>
 
               <p
-                className="mt-0.5 text-base sm:text-lg font-medium text-white/85"
+                className={`mt-0.5 text-base sm:text-lg font-medium ${dayNight === "night" ? "text-white/85" : "text-slate-900/85"}`}
               >
-                {Math.round(weather?.feelsLike)}°
+                {formatTemperature(weather?.feelsLike, unit)}°
                 {unit === "imperial" ? "F" : "C"}
               </p>
 
@@ -265,13 +268,13 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
 
         {/* DIVIDER */}
         <div
-          className="mt-7 lg:mt-9 h-px w-full bg-gradient-to-r from-white/10 via-white/[0.04] to-transparent"
+          className={`mt-7 lg:mt-9 h-px w-full bg-gradient-to-r ${dayNight === "night" ? "from-white/10 via-white/[0.04] to-transparent" : "from-slate-900/10 via-slate-900/[0.04] to-transparent"}`}
         />
 
 
         {/* CONTEXT */}
         <div
-          className="mt-3 flex items-center justify-between text-[10px] sm:text-xs tracking-wide text-white/30"
+          className={`mt-3 flex items-center justify-between text-[10px] sm:text-xs tracking-wide ${dayNight === "night" ? "text-white/40" : "text-slate-900/40"}`}
         >
           <span>Today</span>
           <span>Live conditions</span>
@@ -284,16 +287,16 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
 
         <div className="flex items-end justify-between mb-3 px-1">
           <div>
-            <h2 className="text-xs sm:text-sm font-medium tracking-[0.12em] text-white/50 uppercase">
+            <h2 className={`text-xs sm:text-sm font-medium tracking-[0.12em] ${dayNight === "night" ? "text-white/50" : "text-slate-900/50"} uppercase`}>
               Hourly Forecast
             </h2>
 
-            <p className="mt-1 text-[10px] sm:text-xs text-white/25">
+            <p className={`mt-1 text-[10px] sm:text-xs ${dayNight === "night" ? "text-white/35" : "text-slate-900/35"}`}>
               Next 24 hours
             </p>
           </div>
 
-          <span className="text-[10px] text-white/25 lg:hidden">
+          <span className={`text-[10px] ${dayNight === "night" ? "text-white/35" : "text-slate-900/35"} lg:hidden`}>
             Swipe →
           </span>
         </div>
@@ -301,6 +304,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
         <HourlyRow
           hourly={hourly}
           unit={unit}
+          dayNight={dayNight}
         />
 
       </div>
@@ -310,11 +314,11 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
       <div className="mt-8 sm:mt-10">
 
         <div className="mb-3 px-1">
-          <h2 className="text-xs sm:text-sm font-medium tracking-[0.12em] text-white/50 uppercase">
+          <h2 className={`text-xs sm:text-sm font-medium tracking-[0.12em] ${dayNight === "night" ? "text-white/50" : "text-slate-900/50"} uppercase`}>
             Weather Details
           </h2>
 
-          <p className="mt-1 text-[10px] sm:text-xs text-white/25">
+          <p className={`mt-1 text-[10px] sm:text-xs ${dayNight === "night" ? "text-white/35" : "text-slate-900/35"}`}>
             Current atmospheric conditions
           </p>
         </div>
@@ -325,40 +329,48 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
             icon={<FaDroplet size={20} />}
             data={`${weather?.humidity}%`}
             text="Humidity"
+            dayNight={dayNight}
           />
 
           <Data
             icon={<FaWind size={20} />}
-            data={`${weather?.windSpeed} m/s`}
+            data={formatWindSpeed(weather?.windSpeed, unit)}
             text="Wind Speed"
+            dayNight={dayNight}
           />
 
           <Data
             icon={<CiTempHigh size={22} />}
-            data={`H:${Math.round(weather?.tempMax)}° / L:${Math.round(weather?.tempMin)}°`}
+            data={`H:${formatTemperature(
+              weather?.tempMax,
+              unit
+            )}° / L:${formatTemperature(
+              weather?.tempMin,
+              unit
+            )}°`}
             text={`Range °${unit === "imperial" ? "F" : "C"}`}
+            dayNight={dayNight}
           />
 
           <Data
             icon={<FaTachometerAlt size={19} />}
             data={`${weather?.pressure} mb`}
             text="Pressure"
+            dayNight={dayNight}
           />
 
           <Data
             icon={<FaEye size={19} />}
-            data={`${(weather?.visibility / 1000).toFixed(1)} km`}
+            data={formatVisibility(weather?.visibility, unit)}
             text="Visibility"
+            dayNight={dayNight}
           />
 
           <Data
             icon={<WiStrongWind size={22} />}
-            data={
-              weather?.windGust
-                ? `${weather.windGust} m/s`
-                : "—"
-            }
+            data={formatWindSpeed(weather?.windGust, unit)}
             text="Wind Gust"
+            dayNight={dayNight}
           />
 
         </div>
@@ -367,7 +379,7 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
 
       {airQuality && (
         <div className="mt-6 lg:mt-8">
-          <AirQuality airQuality={airQuality} />
+          <AirQuality airQuality={airQuality} dayNight={dayNight} />
         </div>
       )}
 
@@ -379,4 +391,4 @@ const Card = ({ weather, loading, error, unit, setUnit, hourly, toggleFavorite, 
   );
 };
 
-export default Card;
+export default React.memo(Card);

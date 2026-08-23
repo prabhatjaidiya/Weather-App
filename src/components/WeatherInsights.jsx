@@ -1,19 +1,11 @@
 import React from "react";
 
-const WeatherInsights = ({ insights }) => {
+const WeatherInsights = ({ insights, dayNight }) => {
   if (!insights?.length) return null;
 
   return (
     <section
-      className="
-        w-full
-        rounded-[28px]
-        p-5 sm:p-6 lg:p-7
-        bg-white/[0.07]
-        backdrop-blur-2xl
-        border border-white/[0.10]
-        shadow-[0_20px_80px_rgba(0,0,0,0.20)]
-      "
+      className="w-full rounded-[28px] p-5 sm:p-6 lg:p-7  bg-white/[0.045] border border-white/[0.07] transition-all duration-300 shadow-[0_20px_80px_rgba(0,0,0,0.25)]"
     >
       {/* Header */}
       <div className="flex items-center gap-3 mb-5">
@@ -31,7 +23,7 @@ const WeatherInsights = ({ insights }) => {
         </div>
 
         <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          <p className={`text-[10px] uppercase tracking-[0.18em] ` + (dayNight === "night" ? "text-white/45" : "text-slate-900/45")}>
             Smart Analysis
           </p>
 
@@ -89,7 +81,7 @@ const WeatherInsights = ({ insights }) => {
                 {insight.title}
               </h3>
 
-              <p className="mt-1 text-xs sm:text-sm text-white/45 leading-relaxed">
+              <p className={`mt-1 text-xs sm:text-sm ` + (dayNight === "night" ? "text-white/55" : "text-slate-900/55") + " leading-relaxed"}>
                 {insight.message}
               </p>
             </div>
@@ -100,4 +92,4 @@ const WeatherInsights = ({ insights }) => {
   );
 };
 
-export default WeatherInsights;
+export default React.memo(WeatherInsights);
