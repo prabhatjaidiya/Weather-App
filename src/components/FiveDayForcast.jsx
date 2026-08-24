@@ -1,6 +1,6 @@
 import React from "react";
 import DayData from "./DayData";
-import { formatTemperature } from "../utils/unitUtils";
+import { formatTemperature, formatWindSpeed } from "../utils/unitUtils";
 
 const FiveDayForcast = ({ forecast, unit, dayNight }) => {
 
@@ -37,7 +37,7 @@ const FiveDayForcast = ({ forecast, unit, dayNight }) => {
               high={formatTemperature(f.high, unit)}
               low={formatTemperature(f.low, unit)}
               rainProbability={f.rainProbability}
-              windSpeed={Number(f.windSpeed).toFixed(1)}
+              windSpeed={formatWindSpeed(f.windSpeed, unit)}
               unit={unit}
               dayNight={dayNight}
             />

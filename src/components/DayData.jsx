@@ -56,7 +56,7 @@ const DayData = ({
         </span>
 
         <span className="text-xs">
-          {windSpeed} m/s
+          {windSpeed}
         </span>
       </div>
 
