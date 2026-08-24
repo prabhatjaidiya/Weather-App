@@ -8,6 +8,7 @@ const DayData = ({
   high,
   low,
   windSpeed,
+  rainProbability,
   unit,
   dayNight
 }) => {
@@ -44,7 +45,6 @@ const DayData = ({
 
       {/* Wind */}
       <div className={`
-        hidden
         sm:flex
         items-center
         gap-1
